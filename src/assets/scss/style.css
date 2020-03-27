@@ -1,0 +1,735 @@
+body {
+  min-height: 100vh;
+  position: relative;
+  background: url(../images/background.png) no-repeat center top;
+  font-family: "Roboto", sans-serif !important;
+}
+
+body {
+  padding-top: 68px;
+}
+
+/*Header Starts*/
+header {
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#e77717), to(#97281e));
+  background-image: linear-gradient(to bottom, #e77717, #97281e);
+}
+
+header h1 {
+  margin: 0;
+  display: inline-block;
+}
+
+header h1 a {
+  width: 154px;
+  height: auto;
+  padding: 10px 0;
+  display: inline-block;
+  background: url(../images/logo.png) no-repeat center center/contain;
+  text-indent: -9999px;
+}
+
+/*Header Ends*/
+.dob {
+  background: #fff url(../images/calender.png) no-repeat 97% center;
+}
+
+.datepicker {
+  z-index: 10000 !important;
+}
+
+.invisible {
+  visibility: hidden !important;
+}
+
+.cstmbtn1 {
+  min-width: 130px;
+  padding: 7px 25px;
+  border: solid 1px #043b6d;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  background-color: #043b6d;
+  color: #fff;
+  font: 500 18px "Roboto", sans-serif;
+  outline: 0 !important;
+  text-decoration: none;
+}
+
+.cstmbtn2 {
+  min-width: 130px;
+  padding: 7px 25px;
+  border: solid 1px #043b6d;
+  border-radius: 30px;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  background-color: transparent;
+  color: #043b6d;
+  font: 500 18px "Roboto", sans-serif;
+  outline: 0 !important;
+  text-decoration: none;
+}
+
+.mainSec .chkbox1 table tr td {
+  vertical-align: top;
+}
+
+.mainSec .chkbox1 table tr td input {
+  display: none;
+}
+
+.mainSec .chkbox1 table tr td input + label::before {
+  content: '';
+  width: 22px;
+  height: 22px;
+  border: solid 1px #c6c6c6;
+  margin-right: 3px;
+  border-radius: 7px;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  display: inline-block;
+  background-color: #ffffff;
+  vertical-align: middle;
+}
+
+.mainSec .chkbox1 table tr td input:checked + label::before {
+  background: #fff url(../images/tick.png) no-repeat center center/9px;
+}
+
+.mainSec .chkbox1 table tr td label {
+  margin: 0;
+  color: #5a5a5a;
+  cursor: pointer;
+  font: 500 14px "Roboto", sans-serif;
+}
+
+.topsec {
+  padding: 65px 15px;
+  background: url(../images/health-bg.png) no-repeat left top;
+}
+
+.topsec h2 {
+  margin: 0;
+  color: #043b6d;
+  font: 700 35px "Roboto", sans-serif;
+}
+
+.topsec span {
+  color: #a0311d;
+  font: 700 20px "Roboto", sans-serif;
+}
+
+.topsec .formdiv {
+  padding-right: 75px;
+  margin-top: 40px;
+}
+
+.topsec .formdiv label {
+  margin: 0 0 5px;
+  color: #323657;
+  font: 500 16px "Roboto", sans-serif;
+}
+
+.topsec .formdiv .form-control {
+  height: 36px;
+  border: solid 1px #cccccc;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 0 0 0;
+  -webkit-box-shadow: 0 0 0 0;
+  -moz-box-shadow: 0 0 0 0;
+  color: #6a6a6a;
+  font: 400 15px "Roboto", sans-serif;
+}
+
+.topsec .formdiv .form-control:focus {
+  border-color: #e77717;
+}
+
+.mainSec .renewDiv {
+  padding: 15px 25px 0;
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#316ca1), to(#043b6d));
+  background-image: linear-gradient(to bottom, #316ca1, #043b6d);
+  box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.34);
+  -webkit-box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.34);
+  -moz-box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.34);
+}
+
+.mainSec .renewDiv h3 {
+  margin: 0 0 15px;
+  color: #fff;
+  font: 500 18px "Roboto", sans-serif;
+}
+
+.mainSec .renewDiv h4 {
+  margin: 0;
+  color: #fff;
+  font: 500 22px "Roboto", sans-serif;
+}
+
+.mainSec .renewDiv small {
+  color: #fff;
+  font: 400 16px "Roboto", sans-serif;
+}
+
+.mainSec .renewDiv .premDiv {
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  background-color: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.mainSec .renewDiv .premDiv table {
+  width: 100%;
+}
+
+.mainSec .renewDiv .premDiv table tr td {
+  padding: 20px;
+  color: #ffffff;
+  font: 500 16px "Roboto", sans-serif;
+  vertical-align: middle;
+}
+
+.mainSec .renewDiv .premDiv table tr td span {
+  padding-left: 28px;
+  background: url(../images/rupee.png) no-repeat left center/19px;
+  color: #ffffff;
+  font: 500 38px "Roboto", sans-serif;
+}
+
+.mainSec .renewDiv .modifyDiv {
+  height: 100%;
+  border: solid 1px #3571a8;
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  overflow: hidden;
+}
+
+.mainSec .renewDiv .modifyDiv ul {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: table;
+  text-align: center;
+}
+
+.mainSec .renewDiv .modifyDiv ul li {
+  width: 50%;
+  padding: 15px;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.mainSec .renewDiv .modifyDiv ul li .radio1 {
+  width: 100%;
+}
+
+.mainSec .renewDiv .modifyDiv ul li .radio1 tr td {
+  vertical-align: middle;
+}
+
+.mainSec .renewDiv .modifyDiv ul li .radio1 tr td input {
+  display: none;
+}
+
+.mainSec .renewDiv .modifyDiv ul li .radio1 tr td input:checked + label::before {
+  background-color: #043b6d;
+  box-shadow: inset 0 0 0 4px #fff;
+  -webkit-box-shadow: inset 0 0 0 4px #fff;
+  -moz-box-shadow: inset 0 0 0 4px #fff;
+}
+
+.mainSec .renewDiv .modifyDiv ul li .radio1 tr td label {
+  margin: 0;
+  color: #fff;
+  cursor: pointer;
+  font: 500 16px "Roboto", sans-serif;
+}
+
+.mainSec .renewDiv .modifyDiv ul li .radio1 tr td label::before {
+  content: '';
+  width: 25px;
+  height: 25px;
+  border: 1px solid #D4D4D3;
+  margin-right: 7px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  display: inline-block;
+  background-color: #fff;
+  vertical-align: middle;
+  transition: all 0.2s linear;
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+}
+
+.mainSec .insureDiv {
+  border: solid 1px rgba(49, 108, 161, 0.32);
+  margin: 10px 0;
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  background-color: #ffffff;
+  box-shadow: 3px 3px 3px 0 rgba(126, 126, 126, 0.82);
+  -webkit-box-shadow: 3px 3px 3px 0 rgba(126, 126, 126, 0.82);
+  -moz-box-shadow: 3px 3px 3px 0 rgba(126, 126, 126, 0.82);
+  overflow: hidden;
+}
+
+.mainSec .insureDiv .innerdiv {
+  padding: 20px 30px 0;
+}
+
+.mainSec .insureDiv .innerdiv.confirmdiv small {
+  color: #939393;
+  font: 500 14px "Roboto", sans-serif;
+}
+
+.mainSec .insureDiv .innerdiv.confirmdiv span {
+  margin-top: 3px;
+  display: block;
+  color: #262626;
+  font: 500 18px "Roboto", sans-serif;
+}
+
+.mainSec .insureDiv .innerdiv.confirmdiv span.rupee {
+  padding-left: 18px;
+  background: url(../images/rupee-black.png) no-repeat left center/11px;
+}
+
+.mainSec .insureDiv .innerdiv.confirmdiv .donloadLnk {
+  width: 40px;
+  height: 40px;
+  margin-top: 8px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  display: inline-block;
+  background: #f27b1a url(../images/download.png) no-repeat center center;
+  text-decoration: none;
+  vertical-align: top;
+}
+
+.mainSec .insureDiv h4 {
+  padding: 9px;
+  margin: 0;
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  position: relative;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#336ea3), to(#043c6e));
+  background-image: linear-gradient(to bottom, #336ea3, #043c6e);
+  box-shadow: 3px 3px 3px 0 rgba(126, 126, 126, 0.82);
+  -webkit-box-shadow: 3px 3px 3px 0 rgba(126, 126, 126, 0.82);
+  -moz-box-shadow: 3px 3px 3px 0 rgba(126, 126, 126, 0.82);
+  color: #ffffff;
+  font: 500 18px "Roboto", sans-serif;
+  text-align: center;
+}
+
+.mainSec .insureDiv h4 a {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.mainSec .insureDiv h4 a img {
+  width: 20px;
+}
+
+.mainSec .insureDiv label {
+  margin: 0;
+  color: #043b6d;
+  font: 400 14px "Roboto", sans-serif;
+}
+
+.mainSec .insureDiv .form-control {
+  height: 35px;
+  padding-left: 0;
+  border: 0;
+  border-bottom: 1px solid #C6C6C6;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  background-color: #fff;
+  box-shadow: 0 0 0 0;
+  -webkit-box-shadow: 0 0 0 0;
+  -moz-box-shadow: 0 0 0 0;
+  color: #4b4b4b;
+  font: 500 16px "Roboto", sans-serif;
+}
+
+.mainSec .insureDiv .form-control:focus {
+  border-color: #336ea3;
+}
+
+.mainSec .insureDiv .form-control:disabled {
+  border-bottom: 0;
+  background: #fff;
+}
+
+.mainSec .insureDiv .radio1 {
+  margin-top: 5px;
+}
+
+.mainSec .insureDiv .radio1 tr td {
+  width: 75px;
+  vertical-align: middle;
+}
+
+.mainSec .insureDiv .radio1 tr td input {
+  display: none;
+}
+
+.mainSec .insureDiv .radio1 tr td input:checked + label::before {
+  background-color: #043b6d;
+  box-shadow: inset 0 0 0 3px #fff;
+  -webkit-box-shadow: inset 0 0 0 3px #fff;
+  -moz-box-shadow: inset 0 0 0 3px #fff;
+}
+
+.mainSec .insureDiv .radio1 tr td label {
+  margin: 0;
+  color: #4b4b4b;
+  cursor: pointer;
+  font: 500 16px "Roboto", sans-serif;
+}
+
+.mainSec .insureDiv .radio1 tr td label::before {
+  content: '';
+  width: 19px;
+  height: 19px;
+  border: 1px solid #D4D4D3;
+  margin-right: 7px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  display: inline-block;
+  background-color: #fff;
+  vertical-align: middle;
+  transition: all 0.2s linear;
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+}
+
+.mainSec .insureDiv .cstmDiv table {
+  width: 100%;
+}
+
+.mainSec .insureDiv .cstmDiv table input, .mainSec .insureDiv .cstmDiv table select {
+  height: 35px;
+  padding-left: 0;
+  border: 0;
+  border-bottom: 1px solid #C6C6C6;
+  background-color: #fff;
+  color: #4b4b4b;
+  font: 500 16px "Roboto", sans-serif;
+  outline: 0 !important;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+}
+
+.mainSec .insureDiv .cstmDiv table input:focus, .mainSec .insureDiv .cstmDiv table select:focus {
+  border-color: #336ea3;
+}
+
+.mainSec .insureDiv .cstmDiv table input:disabled, .mainSec .insureDiv .cstmDiv table select:disabled {
+  border-bottom: 0;
+  background: #fff;
+}
+
+.mainSec .insureDiv .cstmDiv table select {
+  width: 55px;
+  background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right 0.75rem center/8px 10px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.mainSec .insureDiv .cstmDiv table input {
+  width: 100%;
+}
+
+.mainSec .insureDiv a.viewPed {
+  padding: 7px 12px;
+  border: solid 1px #185185;
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  display: block;
+  color: #185185;
+  font: 500 13px "Roboto", sans-serif;
+  text-align: center;
+  text-decoration: none;
+}
+
+.borderBtm {
+  height: 8px;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#e77717), to(#97281e));
+  background-image: linear-gradient(to bottom, #e77717, #97281e);
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.popforms .modal-content {
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  overflow: hidden;
+}
+
+.popforms .modal-content .modal-body {
+  padding: 0;
+}
+
+.popforms .modal-content .modal-body h3 {
+  margin: 0;
+  padding: 15px;
+  background-color: #eeeeee;
+  color: #043b6d;
+  font: 500 14px "Roboto", sans-serif;
+}
+
+.popforms .modal-content .modal-body ul {
+  padding: 20px 30px;
+  margin: 0;
+  list-style-type: none;
+}
+
+.popforms .modal-content .modal-body ul li {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.popforms .modal-content .modal-body ul li label {
+  margin: 0;
+  color: #292929;
+  cursor: pointer;
+  font: normal 14px "Roboto", sans-serif;
+}
+
+.popforms .modal-content .modal-body ul li:first-child {
+  margin-right: 70px;
+}
+
+.popforms .modal-content .modal-body .radiodiv1 input {
+  display: none;
+}
+
+.popforms .modal-content .modal-body .radiodiv1 input:checked + label::before {
+  background: #fff url(../images/tick-blue.png) no-repeat center center/11px;
+}
+
+.popforms .modal-content .modal-body .radiodiv1 label::before {
+  content: '';
+  width: 25px;
+  height: 25px;
+  border: solid 1px #c6c6c6;
+  margin-right: 8px;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  display: inline-block;
+  background-color: #ffffff;
+  cursor: pointer;
+  vertical-align: top;
+}
+
+.popforms .modal-foot {
+  padding: 0 15px 15px;
+}
+
+.paymentmode ul {
+  padding-left: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.paymentmode ul li {
+  margin: 15px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.paymentmode ul li a {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.paymentmode ul li a div {
+  width: 78px;
+  height: 78px;
+  margin: 0 auto;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  position: relative;
+  background-color: #EBF2FC;
+}
+
+.paymentmode ul li a div img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.paymentmode ul li a span {
+  margin-top: 5px;
+  display: inline-block;
+  color: #343434;
+  font: 500 11px "Roboto", sans-serif;
+}
+
+@media (max-width: 1199px) {
+  .mainSec .insureDiv a.viewPed {
+    padding: 7px 5px;
+  }
+}
+
+@media (max-width: 991px) {
+  .topsec {
+    background: url(../images/health-bg.png) no-repeat left top/50%;
+  }
+  .popforms .modal-content .modal-body ul li:first-child {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .topsec {
+    padding: 60px 15px 30px;
+    background: url(../images/health-bg-sm.png) no-repeat left top;
+  }
+  .topsec h2 {
+    font: 700 28px "Roboto", sans-serif;
+  }
+  .topsec span {
+    font: 500 15px "Roboto", sans-serif;
+  }
+  .topsec .formdiv {
+    padding-right: 0;
+    margin-top: 70px;
+  }
+}
+
+@media (max-width: 575px) {
+  body {
+    padding-top: 58px;
+  }
+  header {
+    text-align: center;
+  }
+  header h1 a {
+    width: 150px;
+    padding: 5px 0;
+  }
+  .cstmbtn1, .cstmbtn2 {
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .topsec h2 {
+    margin: 0 0 10px;
+  }
+  .topsec .formdiv {
+    padding: 0 30px;
+  }
+  .topsec span {
+    display: inline-block;
+    vertical-align: top;
+  }
+  .mainSec .renewDiv {
+    margin-bottom: 10px;
+  }
+  .mainSec .renewDiv .premDiv table tr td {
+    padding: 15px;
+    font-size: 14px;
+  }
+  .mainSec .renewDiv .premDiv table tr td span {
+    padding-left: 20px;
+    background-size: 15px;
+    font-size: 30px;
+  }
+  .mainSec .renewDiv .modifyDiv {
+    border: 0;
+  }
+  .mainSec .renewDiv .modifyDiv ul li {
+    padding: 0;
+  }
+  .mainSec .renewDiv .modifyDiv ul li .radio1 tr td label {
+    font-size: 14px;
+  }
+  .mainSec .renewDiv .modifyDiv ul li:last-child {
+    text-align: left;
+  }
+  .paymentmode ul li {
+    margin: 10px;
+  }
+  .paymentmode ul li a div {
+    width: 80px;
+    height: 80px;
+  }
+  .paymentmode ul li a div img {
+    width: 46%;
+  }
+}
+
+@media (max-width: 400px) {
+  .topsec h2 {
+    font-size: 20px;
+  }
+}
+.mat-form-field-infix {
+  border-top: none !important;
+  padding: 0px !important;
+}
+.mat-form-field-appearance-legacy .mat-form-field-underline {
+  height: 0px !important;
+}
+
+mat-datepicker-toggle .mat-button-wrapper {
+  padding: 0px !important;
+}
+#snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #9b2c1e;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+  }
+  
+  #snackbar.show {
+  visibility: visible;
+  -webkit-animation: fadein 1.5s, fadeout 0.5s 2.5s !important;
+  animation: fadein 1.5s, fadeout 0.5s 2.5s !important;
+  }
+  .error {
+    color: red !important;
+    font-weight: 250 !important;
+    font: 13px "Roboto", sans-serif !important;
+    padding: 5px;
+  }
+/*# sourceMappingURL=style.css.map */

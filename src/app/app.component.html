@@ -1,0 +1,30 @@
+<head>
+  <title>Health Insurance - GCHI - ICICI Lombard</title>
+</head>
+<header class="container-fluid fixed-top">
+  <div class="row">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h1>
+            <a href="#" title="ICICI Lombard" class="logo">ICICI Lombard</a>
+          </h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+
+<div class="loader" *ngIf="commonService.isLoading">
+  <img style="padding:250px 50px; " src="assets/images/loading.gif" />
+</div>
+<div class="loader" *ngIf="commonService.isLoader">
+  <img style="padding:250px 50px; height: 700px;" src="assets/images/loader.gif" />
+</div>
+
+
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

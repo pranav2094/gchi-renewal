@@ -1,0 +1,444 @@
+<section class="container-fluid topsec">
+    <div class="row">
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-5 offset-xl-5 col-lg-6 offset-lg-5 col-md-6 offset-md-6 col-sm-8 offset-sm-3 col-7 offset-5">
+            <h2>Health Renewal</h2>
+            <span>I want to renew/extend my insurance policy</span>
+          </div>
+          <div class="col-xl-5 offset-xl-5 col-lg-6 offset-lg-5 col-md-6 offset-md-6">            
+            <div class="formdiv">
+              <div class="form-group">
+                <label>My Policy Number</label>
+                <input type="text" class="form-control" placeholder="IL8756800HGT76" />
+              </div>
+              <div class="form-group">
+                <label>Date of Birth</label>
+                <mat-form-field class="form-control">
+                  <input matInput [matDatepicker]="picker" id="DateOfBirth" readonly
+                  [min]="meminDOBHB" [max]="memmaxDOBHB" (click)="picker.open()" (dateChange)="getDateOfBirth($event)">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <span id = "doberror" class="error"></span>
+              </div>
+              <div class="text-center">
+                <button type="button" (click)="checkDateOfBirth()" class="cstmbtn1">Renew</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="container-fluid mainSec" *ngIf="showRenewal">
+    <div class="row">
+      <div class="container">
+        <div class="renewDiv">
+          <h3 class="text-center">Renewal Premium Payable</h3>
+          <div class="row">
+            <div class="col-xl-7 col-lg-6 form-group">
+              <div class="premDiv">
+                <table>
+                  <tr>
+                    <td>
+                      Premium for 1 Year
+                    </td>
+                    <td class="text-right">
+                      <span>9271</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="col-xl-5 col-lg-6 form-group">
+              <div class="modifyDiv">
+                <ul>
+                  <li>
+                    <table class="radio1">
+                      <tr>
+                        <td>
+                          <input type="radio" id="renewal" value="renewal" (change)=renewalType($event) name="sltAnyone" checked />
+                          <label for="renewal">Renewal</label>
+                        </td>
+                      </tr>
+                    </table>
+                  </li>
+                  <li>
+                    <table class="radio1">
+                      <tr>
+                        <td>
+                          <input type="radio" id="modifyDet" value="modify" (change)=renewalType($event) name="sltAnyone" />
+                          <label for="modifyDet">Modified Details</label>
+                        </td>
+                      </tr>
+                    </table>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+        <div class="insureDiv"  *ngFor="let insure of insureDetails; let i = index ">
+          <h4>Insured - {{i+1}}</h4>
+          <div class="innerdiv">
+            <div class="row">
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Insured Category</label>
+                <select class="form-control custom-select" disabled>
+                  <option>Adult</option>
+                  <option>Child</option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Relationship</label>
+                <select class="form-control custom-select" disabled>
+                  <option>Self</option>
+                  <option>Spouse</option>
+                  <option>Son</option>
+                </select>
+              </div>
+              <div class="col-lg-3 col-12 form-group cstmDiv">
+                <label>Full Name</label>
+                <table>
+                  <tr>
+                    <td width="65">
+                      <select disabled>
+                        <option>Mr.</option>
+                        <option>Mrs.</option>
+                        <option>Ms.</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" placeholder="Enter Full Name" value="Harish Chakraborti" disabled/>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-lg-2 col-md-5 col-sm-5 form-group">
+                <label>Date of Birth</label>
+                <input type="text" class="form-control dob" placeholder="DD-MM-YYYY" value="06-02-1982" disabled/>
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
+                <label>PED</label>
+                <table class="radio1">
+                  <tr>
+                    <td>
+                      <input type="radio" id="ped_Yes_1" name="ped_1" disabled/>
+                      <label for="ped_Yes_1">Yes</label>
+                    </td>
+                    <td>
+                      <input type="radio" id="ped_No_1" name="ped_1" checked disabled/>
+                      <label for="ped_No_1">No</label>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="insureDiv">
+          <h4>Insured - 2 
+            <a href="javascript:void(0)" title="Delete">
+              <img src="assets/images/trash.png" alt="icon" />
+            </a>
+          </h4>
+          <div class="innerdiv">
+            <div class="row">
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Insured Category</label>
+                <select class="form-control custom-select" disabled>
+                  <option>Adult</option>
+                  <option>Child</option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Relationship</label>
+                <select class="form-control custom-select" disabled>
+                  <option>Self</option>
+                  <option>Spouse</option>
+                  <option>Son</option>
+                </select>
+              </div>
+              <div class="col-lg-3 col-12 form-group cstmDiv">
+                <label>Full Name</label>
+                <table>
+                  <tr>
+                    <td width="65">
+                      <select disabled>
+                        <option>Mr.</option>
+                        <option>Mrs.</option>
+                        <option>Ms.</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" placeholder="Enter Full Name" value="Harish Chakraborti" disabled/>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-lg-2 col-md-5 col-sm-5 form-group">
+                <label>Date of Birth</label>
+                <input type="text" class="form-control dob" placeholder="DD-MM-YYYY" value="06-02-1982" disabled/>
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
+                <label>PED</label>
+                <table class="radio1">
+                  <tr>
+                    <td>
+                      <input type="radio" id="ped_Yes_2" name="ped_2" checked disabled/>
+                      <label for="ped_Yes_2">Yes</label>
+                    </td>
+                    <td>
+                      <input type="radio" id="ped_No_2" name="ped_2" disabled/>
+                      <label for="ped_No_2">No</label>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-lg-1 col-md-2 col-sm-2  col-5 p-0 form-group">
+                <label class="invisible">btn</label>
+                <a href="javascript:void(0)" class="viewPed" data-toggle="modal" data-target="#preExistDiseaModal" data-backdrop="static" data-keyboard="false">View PED</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="insureDiv">
+          <h4>Insured - 3
+            <a href="javascript:void(0)" title="Delete">
+              <img src="assets/images/trash.png" alt="icon" />
+            </a>
+          </h4>
+          <div class="innerdiv">
+            <div class="row">
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Insured Category</label>
+                <select class="form-control custom-select">
+                  <option>Adult</option>
+                  <option>Child</option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Relationship</label>
+                <select class="form-control custom-select">
+                  <option>Self</option>
+                  <option>Spouse</option>
+                  <option>Son</option>
+                </select>
+              </div>
+              <div class="col-lg-3 col-12 form-group cstmDiv">
+                <label>Full Name</label>
+                <table>
+                  <tr>
+                    <td width="65">
+                      <select>
+                        <option>Mr.</option>
+                        <option>Mrs.</option>
+                        <option>Ms.</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" placeholder="Enter Full Name" />
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-lg-2 col-md-5 col-sm-5 form-group">
+                <label>Date of Birth</label>
+                <input type="text" class="form-control dob" placeholder="DD-MM-YYYY" />
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
+                <label>PED</label>
+                <table class="radio1">
+                  <tr>
+                    <td>
+                      <input type="radio" id="ped_Yes_3" name="ped_3" />
+                      <label for="ped_Yes_3">Yes</label>
+                    </td>
+                    <td>
+                      <input type="radio" id="ped_No_3" name="ped_3" checked/>
+                      <label for="ped_No_3">No</label>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <!-- <div class="text-center mt-3 mb-4">
+          <button type="button" class="cstmbtn2">Add Insured</button>
+        </div> -->
+        <div class="insureDiv">
+          <h4>Plan Details</h4>
+          <div class="innerdiv">
+            <div class="row">
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Plan Name</label>
+                <input type="text" class="form-control" value="Health Protect" disabled/>
+              </div>
+              <div class="col-lg-2 col-md-6 col-sm-6 col-6 form-group">
+                <label>Number of Adult</label>
+                <input type="text" class="form-control" value="02" disabled/>
+              </div>
+              <div class="col-lg-2 col-md-6 col-sm-6 col-6 form-group">
+                <label>Number of Child</label>
+                <input type="text" class="form-control" value="01" disabled/>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>Age of Eldest Member</label>
+                <input type="text" class="form-control" value="55 - 60 Years" disabled/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Policy Tenure</label>
+                <select class="form-control custom-select">
+                  <option>1 Year</option>
+                  <option>2 Year</option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Sum Insured</label>
+                <select class="form-control custom-select">
+                  <option>2000</option>
+                  <option>5000</option>
+                </select>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-6 form-group">
+                <label>Customer State (Applicable for GST)</label>
+                <select class="form-control custom-select">
+                  <option>Maharashtra</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-3 mb-5">
+          <button type="button" class="cstmbtn1">Recalculate</button>
+        </div>
+        <div class="insureDiv">
+          <h4>Applicant Details</h4>
+          <div class="innerdiv">
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-6 form-group">
+                <label>Applicant Full Name</label>
+                <input type="text" class="form-control" placeholder="Enter Applicant Full Name" />
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>Aadhar Card Number</label>
+                <input type="tel" class="form-control" placeholder="Enter Aadhar Card Number" />
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>Pancard Number</label>
+                <input type="text" class="form-control" placeholder="Enter Pancard Number" />
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-6 form-group">
+                <label>Address line 01</label>
+                <input type="text" class="form-control" placeholder="Enter Address" />
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-6 form-group">
+                <label>Address line 02</label>
+                <input type="text" class="form-control" placeholder="Enter Address" />
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>City</label>
+                <select class="form-control custom-select">
+                  <option>Mumbai</option>
+                  <option>Pune</option>
+                </select>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>State</label>
+                <select class="form-control custom-select">
+                  <option>Maharashtra</option>
+                </select>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>Pincode</label>
+                <input type="tel" class="form-control" placeholder="Enter" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="insureDiv">
+          <div class="innerdiv">
+            <div class="row">
+              <div class="col-12">
+                <div class="chkbox1 mb-2">
+                  <table>
+                    <tr>
+                      <td width="35">
+                        <div class="radiodiv1">
+                          <input type="checkbox" id="iagree1" name="iagree1" checked />
+                          <label for="iagree1"></label>
+                        </div>
+                      </td>
+                      <td>
+                        <label for="iagree1">I give my consent to ICICI Lombard for reaching me on Whats App for future engagement related to my Insurance policy.</label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="chkbox1 mb-2">
+                  <table>
+                    <tr>
+                      <td width="35">
+                        <div class="radiodiv1">
+                          <input type="checkbox" id="iagree2" name="iagree2" checked />
+                          <label for="iagree2"></label>
+                        </div>
+                      </td>
+                      <td>
+                        <label for="iagree2">I give my consent to receive only soft copy of my policy kit as my contribution to go green initiative of ICICI Lombard.</label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="chkbox1 mb-2">
+                  <table>
+                    <tr>
+                      <td width="35">
+                        <div class="radiodiv1">
+                          <input type="checkbox" id="iagree3" name="iagree3" checked />
+                          <label for="iagree3"></label>
+                        </div>
+                      </td>
+                      <td>
+                        <label for="iagree3">Auto renewal consent for next year</label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-6 form-group">
+                <label>Account Holder Name</label>
+                <input type="text" class="form-control" placeholder="Enter Account Holder Name" />
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>ICICI Bank Account Number</label>
+                <input type="tel" class="form-control" placeholder="Enter" />
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>IFSC Code</label>
+                <input type="text" class="form-control" placeholder="Enter" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-3 mb-5">
+          <button type="button" class="cstmbtn1">Submit</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
