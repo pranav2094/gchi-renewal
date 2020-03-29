@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  baseURL :'https://ipartner.icicilombard.com/mobileagentapi',
+  ProdBaseURL:'https://app9.icicilombard.com',
 };
 
 /*

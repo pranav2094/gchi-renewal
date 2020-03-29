@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
 import { CommonMethodsService } from 'src/app/common-methods.service';
+import {CommonServicesService} from 'src/app/common-services.service'
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
+import { DiseaseModalComponent } from '../disease-modal/disease-modal.component';
+
 declare var $: any;
 
 @Component({
@@ -15,8 +19,9 @@ export class RenewalPolicyComponent implements OnInit {
   dateofBirth:any;
   showRenewal:boolean=false;
   insureDetails:{};
+  questionList:any;
  
-  constructor(public cm:CommonMethodsService) { }
+  constructor(public matDialog: MatDialog, public cm:CommonMethodsService,public cs:CommonServicesService) { }
 
   ngOnInit(): void {
     var today = new Date();
@@ -25,6 +30,7 @@ export class RenewalPolicyComponent implements OnInit {
     this.meminDOBHB = new Date(today.setFullYear(new Date().getFullYear() - 75));
     this.memmaxDOBHB = moment(this.memmaxDOBHB).format('YYYY-MM-DD');
     this.meminDOBHB = moment(this.meminDOBHB).format('YYYY-MM-DD');
+    this.getDiseaseList();
   }
   getDateOfBirth(ev:any)
   {
@@ -40,7 +46,7 @@ export class RenewalPolicyComponent implements OnInit {
   checkDateOfBirth()
   {
     console.log(this.dateofBirth);
-    let date_of_birth=new Date("1999-03-27");
+    let date_of_birth=new Date("1999-03-28");
     if(this.cm.isUndefineORNull(this.dateofBirth))
     {
       $('#doberror').html("Please enter date of birth");
@@ -56,7 +62,7 @@ export class RenewalPolicyComponent implements OnInit {
       }
       else{
         this.showRenewal=false;
-        Swal.fire('Oops...', "Birth Date is mismatch !", 'error');
+        Swal.fire('Oops...', "Birth Date is Mismatch!!!", 'error');
         return false;
       }
     }  
@@ -67,6 +73,32 @@ export class RenewalPolicyComponent implements OnInit {
     ,{"insuredname":"test1","relationship":"SPOUSE","insureddob":"1978-06-13T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","memberType":"adult"}
     ,{"insuredname":"test1233","relationship":"SON","insureddob":"2006-10-10T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","memberType":"child"}
     ,{"insuredname":"test15434","relationship":"DAUGHTER","insureddob":"2018-10-11T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","memberType":"child"}]
+  }
+  getDiseaseList() {
+    console.log("ok");
+    this.cs.getWithParams('/api/healthmaster/GetHealthAilmentList?isAgent=YES').subscribe(res => {
+      console.log("JSON Ailment", res.Details);
+      this.questionList = res.Details;
+    }, err => {
+      console.log(err);
+    });
+  }
+  showPED(ev:any)
+  {
+    console.log(ev);
+    
+    const dialogConfig = new MatDialogConfig();
+    // The user can't close the dialog by clicking outside its body
+    dialogConfig.disableClose = false;
+    dialogConfig.id = "modal-component";
+    dialogConfig.height = "500px";
+    dialogConfig.width = "600px";
+    dialogConfig.data = this.questionList;
+    // https://material.angular.io/components/dialog/overview
+ 
+    
+    const modalDialog = this.matDialog.open(DiseaseModalComponent, dialogConfig);
+    console.log(dialogConfig);
   }
 
 }

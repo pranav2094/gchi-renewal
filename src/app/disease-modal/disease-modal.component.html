@@ -1,0 +1,31 @@
+<div id="modal-content-wrapper">
+    <span id="modalHeader" class="modal_dis_header">
+      <p id="modal-title" class="text-center">Please select the Pre-existing Diseases</p>
+    </span>
+    <form [formGroup]="diseaseForm" (submit)="saveDisease()">
+      <section id="modal-body" class="modalBody">
+        <table>
+          <tr *ngFor="let dis of diseasesList">
+            <td width="35">
+              <div class="radiodiv1">
+                <input type="checkbox" value={{dis.Value}} (change)="onCheckboxChange($event)" id={{dis.Name}}
+                  name={{dis.Name}} />
+                <label for={{dis.Name}}></label>
+              </div>
+            </td>
+            <td>
+              <label for={{dis.Name}}>{{dis.Name}}</label>
+            </td>
+          </tr>
+        </table>
+      </section>
+      <div class="modal-foot col-12" style="margin-bottom: 10px;">
+        <div class="row">
+          <div class="col-12 text-center">
+            <button class="modalBackbtn proceed"  type="submit" value="PROCEED">PROCEED</button>
+            <!-- <a class="modalBackbtn proceed"  data-dismiss="modal">PROCEED</a> -->
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>

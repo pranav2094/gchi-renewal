@@ -127,15 +127,15 @@
               </div>
               <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
                 <label>PED</label>
-                <table class="radio1">
+                <table class="">
                   <tr>
                     <td>
-                      <input type="radio" id="ped_Yes_1" name="ped_1" disabled/>
-                      <label for="ped_Yes_1">Yes</label>
+                      <!-- <input type="radio" id="ped_Yes_1" name="ped_1" disabled/> -->
+                      <span class="withoutUl" id="ped">Yes</span>
                     </td>
                     <td>
-                      <input type="radio" id="ped_No_1" name="ped_1" checked disabled/>
-                      <label for="ped_No_1">No</label>
+                      <!-- <input type="radio" id="ped_No_1" name="ped_1" checked disabled/> -->
+                      <button type="button" (click)="showPED($event)" class="cstmbtn3">View PED</button>
                     </td>
                   </tr>
                 </table>

@@ -732,4 +732,103 @@ mat-datepicker-toggle .mat-button-wrapper {
     font: 13px "Roboto", sans-serif !important;
     padding: 5px;
   }
+  .cstmbtn3{
+    min-width: 120px;
+    padding: 5px 10px;
+    border: solid 1px #043b6d;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    background-color: transparent;
+    color: #043b6d;
+    font: 500 18px "Roboto", sans-serif;
+    outline: 0 !important;
+    text-decoration: none;
+  }
+  .withoutUl
+  {
+    height: 35px;
+    padding-left: 0;
+    border: 0;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    background-color: #fff;
+    box-shadow: 0 0 0 0;
+    -webkit-box-shadow: 0 0 0 0;
+    -moz-box-shadow: 0 0 0 0;
+    color: #4b4b4b;
+    font: 500 16px "Roboto", sans-serif;
+  }
+  
+  mat-dialog-container#modal-component {
+    border-radius: 11px;
+    background-color: #fff;
+  }
+
+  .mat-dialog-container {
+    -webkit-transform: none;
+            transform: none;
+    overflow-x: hidden !important;
+    padding: 4px !important;
+  }
+
+  .modal_dis_header p {
+    font-size: 16px !important;
+    margin: -5px !important;
+    margin: 0 0 5px;
+    padding: 18px 25px;
+    background-color: #d4d4d4;
+    color: #043b6d;
+    font: 500 16px "Roboto", sans-serif;
+  }
+
+  .radiodiv1 input {
+    display: none;
+  }
+
+  .radiodiv1 input:checked + label::before {
+    background: #fff url(../images/tick-blue.png) no-repeat center center/11px;
+  }
+
+  .radiodiv1 label::before {
+    content: '';
+    width: 25px;
+    height: 25px;
+    border: solid 1px #c6c6c6;
+    margin-right: 8px;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    display: inline-block;
+    background-color: #ffffff;
+    cursor: pointer;
+    vertical-align: top;
+  }
+
+  .modalBackbtn {
+    width: 105px;
+    height: 41px;
+    padding: 10px;
+    border: solid 1px #d4d4d4;
+    margin-right: 8px;
+    background-color: #ffffff;
+    color: #707070;
+    font: 400 16px "Roboto", sans-serif;
+    outline: 0;
+    text-align: center;
+  }
+
+  .modalBackbtn.proceed {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#043b6d), to(#001a4a));
+    background-image: linear-gradient(to bottom, #043b6d, #001a4a);
+    margin-top: 25px;
+    color: #fff !important;
+  }
+
+  .modalBody {
+    margin: 10px 0px 10px 10px;
+    overflow: auto;
+  }
+
 /*# sourceMappingURL=style.css.map */

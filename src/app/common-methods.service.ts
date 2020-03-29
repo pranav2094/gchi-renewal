@@ -7,7 +7,7 @@ export class CommonMethodsService {
 
   public isLoading = false;
   public isLoader = false;
-
+  public selctedDiseaseList:any;
   constructor() { }
   getSnackbarMessage(msg="",timer=2000) {
     var x = document.getElementById("snackbar");
