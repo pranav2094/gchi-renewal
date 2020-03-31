@@ -16,12 +16,21 @@
   <link rel="stylesheet" href="assets/scss/bootstrap-datepicker3.min.css" />
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700,900" rel="stylesheet" />
   <link rel="stylesheet" href="assets/scss/style.css" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
 </head>
 <body class="mat-typography">
   <div id="snackbar"></div>
+  <div class="backdrop" id="showSpinnerDiv" style="display: none;">
+		<div class="spinner">
+			<p id="loader_msg"></p>
+			<div class="bounce1"></div>
+			<div class="bounce2"></div>
+			<div class="bounce3"></div>
+		</div>
+	</div>
   <app-root></app-root>
 </body>
 <script src="assets/js/jquery.min.js"></script>

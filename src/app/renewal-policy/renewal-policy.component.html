@@ -82,9 +82,6 @@
 
 
 
-
-
-
         <div class="insureDiv"  *ngFor="let insure of insureDetails; let i = index ">
           <h4>Insured - {{i+1}}</h4>
           <div class="innerdiv">
@@ -133,10 +130,11 @@
                       <!-- <input type="radio" id="ped_Yes_1" name="ped_1" disabled/> -->
                       <span class="withoutUl" id="ped">Yes</span>
                     </td>
-                    <td>
+                    <td *ngIf="iSPED;">
                       <!-- <input type="radio" id="ped_No_1" name="ped_1" checked disabled/> -->
                       <button type="button" (click)="showPED($event)" class="cstmbtn3">View PED</button>
                     </td>
+    
                   </tr>
                 </table>
               </div>
@@ -322,49 +320,72 @@
         <div class="text-center mt-3 mb-5">
           <button type="button" class="cstmbtn1">Recalculate</button>
         </div>
+        <form class="form" [formGroup]="applicantForm" (ngSubmit)="onSubmit()">
         <div class="insureDiv">
           <h4>Applicant Details</h4>
           <div class="innerdiv">
             <div class="row">
               <div class="col-lg-6 col-md-6 col-sm-6 form-group">
                 <label>Applicant Full Name</label>
-                <input type="text" class="form-control" placeholder="Enter Applicant Full Name" />
+                <input type="text" class="form-control" formControlName="applicantName" placeholder="Enter Applicant Full Name" />
+                <span class="text-danger"
+                                *ngIf="(aaplicantFormControl.applicantName.touched || submitted) && aaplicantFormControl.applicantName.errors?.required">
+                                Applicant Name is required
+                </span>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
                 <label>Aadhar Card Number</label>
-                <input type="tel" class="form-control" placeholder="Enter Aadhar Card Number" />
+                <input type="number" class="form-control"  formControlName="applicantAadhar" placeholder="Enter Aadhar Card Number" />
+                <div *ngIf="submitted && aaplicantFormControl.applicantAadhar.errors" class="text-danger">
+                  <div *ngIf="aaplicantFormControl.applicantAadhar.errors.required">Aadhar card number is required</div>
+                  <div *ngIf="aaplicantFormControl.applicantAadhar.touched && aaplicantFormControl.applicantAadhar.errors.pattern">Enter a valid Aadhar card number</div>
+                </div>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
                 <label>Pancard Number</label>
-                <input type="text" class="form-control" placeholder="Enter Pancard Number" />
+                <input type="text" class="form-control" formControlName="applicantPan" placeholder="Enter Pancard Number" />
+                <div *ngIf="submitted && aaplicantFormControl.applicantPan.errors" class="text-danger">
+                  <div *ngIf="aaplicantFormControl.applicantPan.errors.required">Pan card number is required</div>
+                  <div *ngIf="aaplicantFormControl.applicantPan.touched && aaplicantFormControl.applicantPan.errors.pattern">Enter a valid Pancard Number</div>
+                </div>
               </div>
               <div class="col-lg-6 col-md-6 col-sm-6 form-group">
                 <label>Address line 01</label>
-                <input type="text" class="form-control" placeholder="Enter Address" />
+                <input type="text" class="form-control" formControlName="applicantAddress1" placeholder="Enter Address" />
+                <span class="text-danger"
+                                *ngIf="(aaplicantFormControl.applicantAddress1.touched || submitted) && aaplicantFormControl.applicantAddress1.errors?.required">
+                                Applicant Address is required
+                </span>
               </div>
               <div class="col-lg-6 col-md-6 col-sm-6 form-group">
                 <label>Address line 02</label>
-                <input type="text" class="form-control" placeholder="Enter Address" />
-              </div>
-              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                <label>City</label>
-                <select class="form-control custom-select">
-                  <option>Mumbai</option>
-                  <option>Pune</option>
-                </select>
-              </div>
-              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                <label>State</label>
-                <select class="form-control custom-select">
-                  <option>Maharashtra</option>
-                </select>
+                <input type="text" class="form-control" formControlName="applicantAddress2" placeholder="Enter Address" />
+                <span class="text-danger"
+                                *ngIf="(aaplicantFormControl.applicantAddress2.touched || submitted) && aaplicantFormControl.applicantAddress2.errors?.required">
+                                Applicant Address is required
+                </span>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
                 <label>Pincode</label>
-                <input type="tel" class="form-control" placeholder="Enter" />
+                <input type="number" class="form-control"  placeholder="Enter Pincode" formControlName="applicantPinCode" (input)="getPincodeDetails($event)"
+                maxlength="6"/>
+                <span class="text-danger"
+                                *ngIf="(aaplicantFormControl.applicantPinCode.touched || submitted) && aaplicantFormControl.applicantPinCode.errors?.required">
+                                Applicant Pincode is required
+                </span>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>City</label>
+                <input type="text" id="appCity" name="appCity" class="form-control" formControlName="applicantCity"
+                                  placeholder="Enter City" readonly />
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                <label>State</label>
+                <input type="text" id="appState" name="appState" class="form-control"
+                formControlName="applicantState" placeholder="Enter State" readonly />
               </div>
             </div>
-          </div>
+          </div>     
         </div>
         <div class="insureDiv">
           <div class="innerdiv">
@@ -375,7 +396,7 @@
                     <tr>
                       <td width="35">
                         <div class="radiodiv1">
-                          <input type="checkbox" id="iagree1" name="iagree1" checked />
+                          <input type="checkbox" id="iagree1"  formControlName="applicantWhatsappConsent" name="iagree1" checked />
                           <label for="iagree1"></label>
                         </div>
                       </td>
@@ -392,7 +413,7 @@
                     <tr>
                       <td width="35">
                         <div class="radiodiv1">
-                          <input type="checkbox" id="iagree2" name="iagree2" checked />
+                          <input type="checkbox" id="iagree2"  formControlName="applicantPolicyKit" name="iagree2" checked />
                           <label for="iagree2"></label>
                         </div>
                       </td>
@@ -409,7 +430,7 @@
                     <tr>
                       <td width="35">
                         <div class="radiodiv1">
-                          <input type="checkbox" id="iagree3" name="iagree3" checked />
+                          <input type="checkbox" id="iagree3" formControlName="applicantAutoRenewal" name="iagree3" checked />
                           <label for="iagree3"></label>
                         </div>
                       </td>
@@ -422,22 +443,35 @@
               </div>
               <div class="col-lg-4 col-md-6 col-sm-6 form-group">
                 <label>Account Holder Name</label>
-                <input type="text" class="form-control" placeholder="Enter Account Holder Name" />
+                <input type="text" class="form-control" formControlName="applicantAccountName" placeholder="Enter Account Holder Name" />
+                  <span class="text-danger"
+                  *ngIf="(aaplicantFormControl.applicantAccountName.touched || submitted) && aaplicantFormControl.applicantAccountName.errors?.required">
+                    Account Holder Name is required
+                  </span>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
                 <label>ICICI Bank Account Number</label>
-                <input type="tel" class="form-control" placeholder="Enter" />
+                <input type="tel" class="form-control" formControlName="applicantAccountNo" placeholder="Enter Account Number" />
+                <div *ngIf="submitted && aaplicantFormControl.applicantAccountNo.errors" class="text-danger">
+                  <div *ngIf="aaplicantFormControl.applicantAccountNo.errors.required">Account Number is required</div>
+                  <div *ngIf="aaplicantFormControl.applicantAccountNo.touched && aaplicantFormControl.applicantAccountNo.errors.pattern">Enter a valid Account Number</div>
+                </div>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
                 <label>IFSC Code</label>
-                <input type="text" class="form-control" placeholder="Enter" />
+                <input type="text" class="form-control" formControlName="applicantIFSCCode" placeholder="Enter IFSC Code" />
+                <div *ngIf="submitted && aaplicantFormControl.applicantIFSCCode.errors" class="text-danger">
+                  <div *ngIf="aaplicantFormControl.applicantIFSCCode.errors.required">IFSC Code is required</div>
+                  <div *ngIf="aaplicantFormControl.applicantIFSCCode.touched && aaplicantFormControl.applicantIFSCCode.errors.pattern">Enter a valid IFSC Code</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div class="text-center mt-3 mb-5">
-          <button type="button" class="cstmbtn1">Submit</button>
+          <input type="submit"  class="cstmbtn1" value="Submit"/>
         </div>
+      </form>
       </div>
     </div>
   </section>

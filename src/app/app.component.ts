@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonMethodsService} from './common-methods.service'
+import { CommonMethodsService} from './services/common-methods.service'
 
 @Component({
   selector: 'app-root',

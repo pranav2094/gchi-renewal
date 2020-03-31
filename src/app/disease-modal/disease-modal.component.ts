@@ -1,7 +1,7 @@
 import { Component, OnInit,Inject } from '@angular/core';
 import { MatDialogRef } from "@angular/material/dialog";
 import { Validators, FormGroup, FormArray, FormBuilder, FormControl } from '@angular/forms';
-import {CommonMethodsService} from 'src/app/common-methods.service' 
+import {CommonMethodsService} from 'src/app/services/common-methods.service' 
 
 
 @Component({

@@ -1,0 +1,36 @@
+<section class="container-fluid mainSec">
+    <div class="row">
+      <div class="container">
+        <div class="renewDiv text-center pb-3 mt-4">
+          <h4>Congratulations!</h4>
+          <small>Your Health Renewal Policy is Ready</small>
+        </div>
+        <div class="insureDiv mb-5">
+          <div class="innerdiv confirmdiv">
+            <div class="row">
+              <div class="col-sm-6 form-group">
+                <small>Health Renewal Policy Number</small>
+                <span>{{this.paymentConfRes.PolicyNumber}}</span>
+              </div>
+              <div class="col-sm-6 form-group">
+                <small>Total Premium</small>
+                <span class="rupee">{{this.paymentConfRes.Premium}}</span>
+              </div>
+              <div class="col-sm-6 col-6 form-group">
+                <small>Policy Start Date</small>
+                <span>{{this.paymentConfRes.PolicyStartDate}}</span>
+              </div>
+              <div class="col-sm-6 col-6 form-group">
+                <small>Policy End Date</small>
+                <span>{{this.paymentConfRes.PolicyEndDate}}</span>
+              </div>
+              <div class="col-sm-12 text-center form-group">
+                <a (click)="downloadPdf($event)"  title="Download" class="donloadLnk" style="cursor: pointer;"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="borderBtm"></div>

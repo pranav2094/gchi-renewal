@@ -10,6 +10,9 @@ import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DiseaseModalComponent } from './disease-modal/disease-modal.component';
+import { PaymentComponent } from './payment/payment.component';
+import { RazorPayConfirmationComponent } from './razor-pay-confirmation/razor-pay-confirmation.component';
+import { RazorPayFallbackComponent } from './razor-pay-fallback/razor-pay-fallback.component';
 
 
 @NgModule({
@@ -17,7 +20,10 @@ import { DiseaseModalComponent } from './disease-modal/disease-modal.component';
     AppComponent,
     RenewalPolicyComponent,
     PolicyDataSyncComponent,
-    DiseaseModalComponent  
+    DiseaseModalComponent,
+    PaymentComponent,
+    RazorPayConfirmationComponent,
+    RazorPayFallbackComponent  
   ],
   imports: [
     BrowserModule,

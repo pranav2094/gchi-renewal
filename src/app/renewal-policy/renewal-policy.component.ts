@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
-import { CommonMethodsService } from 'src/app/common-methods.service';
-import {CommonServicesService} from 'src/app/common-services.service'
+import { CommonMethodsService } from 'src/app/services/common-methods.service';
+import {CommonServicesService} from 'src/app/services/common-services.service'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
+import * as _ from 'underscore';
+import { Router } from '@angular/router';
 import { DiseaseModalComponent } from '../disease-modal/disease-modal.component';
+import { FormGroup,Validators, FormBuilder } from '@angular/forms';
+
 
 declare var $: any;
 
@@ -20,8 +24,18 @@ export class RenewalPolicyComponent implements OnInit {
   showRenewal:boolean=false;
   insureDetails:{};
   questionList:any;
+  iSPED:boolean=false;
+  spinnerTxt:any;
+  adultRelationShip = []; adultRelationArray = []; childRelationShip = []; childRelationArray = []; NomineeRelationship = [];
+  applicantForm: FormGroup;
+  submitted:boolean= false;
+  pinData:any;
+  stateCode:any;cityCode:any;
+  isWhatsappConsent:boolean=false;
+  isPolicyKit:boolean=false;
+  isAutoRenewal:boolean=false;
  
-  constructor(public matDialog: MatDialog, public cm:CommonMethodsService,public cs:CommonServicesService) { }
+  constructor(public matDialog: MatDialog,private router: Router, public cm:CommonMethodsService,public cs:CommonServicesService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     var today = new Date();
@@ -31,6 +45,26 @@ export class RenewalPolicyComponent implements OnInit {
     this.memmaxDOBHB = moment(this.memmaxDOBHB).format('YYYY-MM-DD');
     this.meminDOBHB = moment(this.meminDOBHB).format('YYYY-MM-DD');
     this.getDiseaseList();
+    this.getRelation();
+    this.applicantForm = this.fb.group({
+      applicantName: ['', Validators.required],
+      applicantAadhar: ['', [Validators.required,Validators.pattern(/^\d{4}\d{4}\d{4}$/)]],
+      applicantPan: ['', [Validators.required,Validators.pattern(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/)]],
+      applicantAddress1: ['',  [Validators.required]],
+      applicantAddress2: ['', [Validators.required]],
+      applicantPinCode: ['', [Validators.required]],
+      applicantState: ['', [Validators.required]],
+      applicantCity: ['', [Validators.required]],
+      applicantWhatsappConsent:[''],
+      applicantPolicyKit:[''],
+      applicantAutoRenewal:[''],
+      applicantAccountName:['',[Validators.required]],
+      applicantAccountNo:['',[Validators.required,Validators.pattern(/^\d{9,18}$/)]],
+      applicantIFSCCode:['',[Validators.required,Validators.pattern(/^[A-Za-z]{4}[a-zA-Z0-9]{7}$/)]]
+    });
+  }
+  get aaplicantFormControl() {
+    return this.applicantForm.controls;
   }
   getDateOfBirth(ev:any)
   {
@@ -40,8 +74,6 @@ export class RenewalPolicyComponent implements OnInit {
   renewalType(val:any)
   {
     console.log(val.target.value);
-    
-
   }
   checkDateOfBirth()
   {
@@ -83,10 +115,71 @@ export class RenewalPolicyComponent implements OnInit {
       console.log(err);
     });
   }
+  getRelation() {
+    this.spinnerTxt = "Please wait... We are fetching data."
+    this.cm.showSpinner(true,this.spinnerTxt);
+    this.cs.postWithParams('/api/healthmaster/GetHealthProposalRelationships?Product=CHI', '').subscribe(res => {
+      this.cm.showSpinner(false);
+      this.adultRelationArray = [];
+      this.childRelationArray = [];
+      this.NomineeRelationship = [];
+
+      res.InsuredRelationship.forEach((relation: any) => {
+        if (relation.KidAdultType == 'Adult') {
+          this.adultRelationArray.push(relation);
+        } else {
+          this.childRelationArray.push(relation);
+          this.childRelationArray  = this.childRelationArray.filter(function (x) { return x.RelationshipName !== "SELF" && x.RelationshipName !== "SPOUSE" && x.RelationshipName !== "EMPLOYEE"; });
+          
+        }
+      });
+      res.NomineeAppointeeRelationship.forEach((rel: any) => {
+        this.NomineeRelationship.push(rel);
+      });
+
+      this.adultRelationArray = _.sortBy(this.adultRelationArray, 'RelationshipName');
+      this.NomineeRelationship = _.sortBy(this.NomineeRelationship, 'RelationshipName');
+      window.localStorage.nomineeRelationship = JSON.stringify(this.NomineeRelationship);
+      this.childRelationArray = _.sortBy(this.childRelationArray, 'RelationshipName');
+      console.log("adult array", this.adultRelationArray);
+      console.log("child array", this.childRelationArray);
+
+    }, err => {
+      // console.log(err);
+    });
+  }
+  getPincodeDetails(ev: any) {
+
+    if (ev.target.value.length == 6) {
+      this.spinnerTxt = "Please wait... We are fetching data."
+      this.cm.showSpinner(true,this.spinnerTxt);
+      let body = ev.target.value;
+      this.cs.postWithParams('/api/rtolist/GetStatesCityByPin', body).subscribe((res) => {
+        this.cm.showSpinner(false);
+        this.pinData = res;
+        console.log("pincode",this.pinData);
+        if (this.pinData.StatusCode == 1) {
+          this.stateCode = this.pinData.StateId;
+          this.cityCode = this.pinData.CityList[0].CityID;
+          this.applicantForm.patchValue({ 'applicantCity': this.pinData.CityList[0].CityName });
+          this.applicantForm.patchValue({ 'applicantState': this.pinData.StateName });
+          let proposalStateCity = { pin: body, city: this.pinData.CityList[0].CityName, state: this.pinData.StateName };
+          localStorage.setItem('CoresspondentStateCity', JSON.stringify(proposalStateCity));
+        }
+        else {
+          this.stateCode = '';
+          this.cityCode = '';
+          this.applicantForm.patchValue({ 'applicantCity': null });
+          this.applicantForm.patchValue({ 'applicantState': null });
+          let proposalStateCity = { pin: body, city: null, state: null };
+          localStorage.setItem('CoresspondentStateCity', JSON.stringify(proposalStateCity));
+        }
+
+      });
+    }
+  }
   showPED(ev:any)
   {
-    console.log(ev);
-    
     const dialogConfig = new MatDialogConfig();
     // The user can't close the dialog by clicking outside its body
     dialogConfig.disableClose = false;
@@ -94,11 +187,20 @@ export class RenewalPolicyComponent implements OnInit {
     dialogConfig.height = "500px";
     dialogConfig.width = "600px";
     dialogConfig.data = this.questionList;
-    // https://material.angular.io/components/dialog/overview
- 
-    
     const modalDialog = this.matDialog.open(DiseaseModalComponent, dialogConfig);
     console.log(dialogConfig);
+  }
+
+  onSubmit() {
+    console.log("submit");
+    
+    this.submitted = true;
+    if (this.applicantForm.valid) {
+      alert('Form Submitted succesfully!!!\n Check the values in browser console.');
+      console.table(this.applicantForm.value);
+      this.router.navigateByUrl('/payment');
+      
+    }
   }
 
 }
