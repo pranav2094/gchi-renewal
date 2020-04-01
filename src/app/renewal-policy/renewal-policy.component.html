@@ -80,9 +80,90 @@
           </div>
         </div>
 
+        <form [formGroup]="angForm">
+          <div formArrayName="Members" class="cmnbox2">
+        <div class="insureDiv"  *ngFor="let member of angForm.get('Members')['controls']; let i = index">
+          <div [formGroupName]="i">
+          <h4>Insured - {{i+1}} <a href="javascript:void(0)" title="Delete">
+            <img src="assets/images/trash.png" alt="icon" *ngIf="modify && angForm.controls.Members.value[i].relationship!='SELF'" (click)="removeInsured(i)">
+          </a></h4>
+          <div class="innerdiv">
+            <div class="row">
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Insured Category</label>
+                  <select class="form-control custom-select" formControlName="membertype"  [attr.disabled]="modify? null : ''" (change)="checkForm()">
+                    <option  value="{{type}}" *ngFor="let type of memberType" [attr.selected]="type==angForm.controls.Members.value[i].membertype ? '': null">{{type | titlecase}}</option>
+                  </select>
+              </div>
+              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+                <label>Relationship</label>
+                <!-- <select class="form-control custom-select"  formControlName="relationship"  [attr.disabled]="modify? null : ''" (change)="checkForm()">
+                  <option  value="{{relation}}" *ngFor="let relation of relationshipArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">{{relation}}</option>
+                </select> -->
+                <select *ngIf="angForm.controls.Members.value[i].membertype=='adult'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
+                  <option  value="" disabled selected>Select Relationship</option>
+                  <option  value={{relation.RelationshipName}} *ngFor="let relation of adultRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
+                    {{relation.RelationshipName | titlecase}}</option>
+                </select>
+                <select *ngIf="angForm.controls.Members.value[i].membertype=='child'" formControlName="relationship"  class="form-control"  >
+                  <option  value="" disabled selected>Select Relationship</option>
+                  <option  value={{relation.RelationshipName}} *ngFor="let relation of childRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
+                    {{relation.RelationshipName | titlecase}}</option>
+                </select>
+              </div>
+              <div class="col-lg-3 col-12 form-group cstmDiv">
+                <label>Full Name</label>
+                <table>
+                  <tr>
+                    <td width="65">
+                      <select>
+                        <option>Mr.</option>
+                        <option>Mrs.</option>
+                        <option>Ms.</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" placeholder="Enter Full Name" value="insuredname" formControlName = "insuredname" [attr.disabled]="modify? null : ''"/>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-lg-2 col-md-5 col-sm-5 form-group">
+                <label>Date of Birth</label>
+                <!-- <input type="date" class="form-control dob" placeholder="DD-MM-YYYY" value="insureddob" formControlName="insureddob" (change)="getInsuredDateOfBirth($event, i)"/> -->
+                <mat-form-field class="form-control">
+                  <input matInput [matDatepicker]="picker" id="DateOfBirth{{i+1}}" readonly
+                  [min]="meminDOBHB" [max]="memmaxDOBHB" (click)="picker.open()" (dateChange)="getInsuredDateOfBirth($event, i)" formControlName="insureddob">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
+                <label>PED</label>
+                <table class="">
+                  <tr>
+                    <td>
+                      <!-- <input type="radio" id="ped_Yes_1" name="ped_1" disabled/> -->
+                      <span class="withoutUl" id="ped">Yes</span>
+                    </td>
+                    <td>
+                      <!-- <input type="radio" id="ped_No_1" name="ped_1" checked disabled/> -->
+                      <button type="button" (click)="showPED($event)" class="cstmbtn3">View PED</button>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+        <div class="text-center mt-3 mb-4">
+          <button type="button" class="cstmbtn2" (click)="addInsured()" *ngIf="modify">Add Insured</button>
+        </div>
+        </form>
 
-
-        <div class="insureDiv"  *ngFor="let insure of insureDetails; let i = index ">
+        <!-- <div class="insureDiv"  *ngFor="let insure of insureDetails; let i = index ">
           <h4>Insured - {{i+1}}</h4>
           <div class="innerdiv">
             <div class="row">
@@ -127,151 +208,18 @@
                 <table class="">
                   <tr>
                     <td>
-                      <!-- <input type="radio" id="ped_Yes_1" name="ped_1" disabled/> -->
                       <span class="withoutUl" id="ped">Yes</span>
                     </td>
                     <td *ngIf="iSPED;">
-                      <!-- <input type="radio" id="ped_No_1" name="ped_1" checked disabled/> -->
                       <button type="button" (click)="showPED($event)" class="cstmbtn3">View PED</button>
                     </td>
-    
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- <div class="insureDiv">
-          <h4>Insured - 2 
-            <a href="javascript:void(0)" title="Delete">
-              <img src="assets/images/trash.png" alt="icon" />
-            </a>
-          </h4>
-          <div class="innerdiv">
-            <div class="row">
-              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Insured Category</label>
-                <select class="form-control custom-select" disabled>
-                  <option>Adult</option>
-                  <option>Child</option>
-                </select>
-              </div>
-              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Relationship</label>
-                <select class="form-control custom-select" disabled>
-                  <option>Self</option>
-                  <option>Spouse</option>
-                  <option>Son</option>
-                </select>
-              </div>
-              <div class="col-lg-3 col-12 form-group cstmDiv">
-                <label>Full Name</label>
-                <table>
-                  <tr>
-                    <td width="65">
-                      <select disabled>
-                        <option>Mr.</option>
-                        <option>Mrs.</option>
-                        <option>Ms.</option>
-                      </select>
-                    </td>
-                    <td>
-                      <input type="text" placeholder="Enter Full Name" value="Harish Chakraborti" disabled/>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-              <div class="col-lg-2 col-md-5 col-sm-5 form-group">
-                <label>Date of Birth</label>
-                <input type="text" class="form-control dob" placeholder="DD-MM-YYYY" value="06-02-1982" disabled/>
-              </div>
-              <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
-                <label>PED</label>
-                <table class="radio1">
-                  <tr>
-                    <td>
-                      <input type="radio" id="ped_Yes_2" name="ped_2" checked disabled/>
-                      <label for="ped_Yes_2">Yes</label>
-                    </td>
-                    <td>
-                      <input type="radio" id="ped_No_2" name="ped_2" disabled/>
-                      <label for="ped_No_2">No</label>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-              <div class="col-lg-1 col-md-2 col-sm-2  col-5 p-0 form-group">
-                <label class="invisible">btn</label>
-                <a href="javascript:void(0)" class="viewPed" data-toggle="modal" data-target="#preExistDiseaModal" data-backdrop="static" data-keyboard="false">View PED</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="insureDiv">
-          <h4>Insured - 3
-            <a href="javascript:void(0)" title="Delete">
-              <img src="assets/images/trash.png" alt="icon" />
-            </a>
-          </h4>
-          <div class="innerdiv">
-            <div class="row">
-              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Insured Category</label>
-                <select class="form-control custom-select">
-                  <option>Adult</option>
-                  <option>Child</option>
-                </select>
-              </div>
-              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Relationship</label>
-                <select class="form-control custom-select">
-                  <option>Self</option>
-                  <option>Spouse</option>
-                  <option>Son</option>
-                </select>
-              </div>
-              <div class="col-lg-3 col-12 form-group cstmDiv">
-                <label>Full Name</label>
-                <table>
-                  <tr>
-                    <td width="65">
-                      <select>
-                        <option>Mr.</option>
-                        <option>Mrs.</option>
-                        <option>Ms.</option>
-                      </select>
-                    </td>
-                    <td>
-                      <input type="text" placeholder="Enter Full Name" />
-                    </td>
-                  </tr>
-                </table>
-              </div>
-              <div class="col-lg-2 col-md-5 col-sm-5 form-group">
-                <label>Date of Birth</label>
-                <input type="text" class="form-control dob" placeholder="DD-MM-YYYY" />
-              </div>
-              <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
-                <label>PED</label>
-                <table class="radio1">
-                  <tr>
-                    <td>
-                      <input type="radio" id="ped_Yes_3" name="ped_3" />
-                      <label for="ped_Yes_3">Yes</label>
-                    </td>
-                    <td>
-                      <input type="radio" id="ped_No_3" name="ped_3" checked/>
-                      <label for="ped_No_3">No</label>
-                    </td>
                   </tr>
                 </table>
               </div>
             </div>
           </div>
         </div> -->
-        <!-- <div class="text-center mt-3 mb-4">
-          <button type="button" class="cstmbtn2">Add Insured</button>
-        </div> -->
+     
         <div class="insureDiv">
           <h4>Plan Details</h4>
           <div class="innerdiv">
@@ -318,7 +266,7 @@
           </div>
         </div>
         <div class="text-center mt-3 mb-5">
-          <button type="button" class="cstmbtn1">Recalculate</button>
+          <button type="button" class="cstmbtn1" (click)="calculateQuote()">Recalculate</button>
         </div>
         <form class="form" [formGroup]="applicantForm" (ngSubmit)="onSubmit()">
         <div class="insureDiv">

@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import * as _ from 'underscore';
 import { Router } from '@angular/router';
 import { DiseaseModalComponent } from '../disease-modal/disease-modal.component';
-import { FormGroup,Validators, FormBuilder } from '@angular/forms';
+import { FormGroup,Validators, FormBuilder,FormArray } from '@angular/forms';
 
 
 declare var $: any;
@@ -22,8 +22,8 @@ export class RenewalPolicyComponent implements OnInit {
   snackbarMessage:any;
   dateofBirth:any;
   showRenewal:boolean=false;
-  insureDetails:{};
-  questionList:any;
+  insureDetails:any;
+  questionList:any;clear
   iSPED:boolean=false;
   spinnerTxt:any;
   adultRelationShip = []; adultRelationArray = []; childRelationShip = []; childRelationArray = []; NomineeRelationship = [];
@@ -34,8 +34,21 @@ export class RenewalPolicyComponent implements OnInit {
   isWhatsappConsent:boolean=false;
   isPolicyKit:boolean=false;
   isAutoRenewal:boolean=false;
+  angForm: FormGroup;
+  customerList: FormArray;
+  memberType = ['adult', 'child'];
+  relationshipArray = ['SELF', 'SPOUSE', 'SON', 'DAUGHTER'];
+  modify: boolean = false;
+  defaultData = {};
+  dateOfBirthArray = [];
+  dobArray = [];
+  customerDetails: any;
  
-  constructor(public matDialog: MatDialog,private router: Router, public cm:CommonMethodsService,public cs:CommonServicesService, private fb: FormBuilder) { }
+  constructor(public matDialog: MatDialog,private router: Router, public cm:CommonMethodsService,public cs:CommonServicesService, private fb: FormBuilder) {
+    this.getInsuredDetails();
+    localStorage.setItem('insuredDetails', JSON.stringify(this.insureDetails));
+    this.customerDetails = this.customerDetails = JSON.parse(localStorage.getItem('insuredDetails')) || [];
+   }
 
   ngOnInit(): void {
     var today = new Date();
@@ -46,6 +59,9 @@ export class RenewalPolicyComponent implements OnInit {
     this.meminDOBHB = moment(this.meminDOBHB).format('YYYY-MM-DD');
     this.getDiseaseList();
     this.getRelation();
+    this.angForm = this.fb.group({
+      Members: this.fb.array([])
+    });
     this.applicantForm = this.fb.group({
       applicantName: ['', Validators.required],
       applicantAadhar: ['', [Validators.required,Validators.pattern(/^\d{4}\d{4}\d{4}$/)]],
@@ -63,48 +79,175 @@ export class RenewalPolicyComponent implements OnInit {
       applicantIFSCCode:['',[Validators.required,Validators.pattern(/^[A-Za-z]{4}[a-zA-Z0-9]{7}$/)]]
     });
   }
+  fillForm(){
+    this.customerList = this.angForm.get('Members') as FormArray;
+    if (this.insureDetails.length) {
+      this.insureDetails.forEach(details => {
+        console.log(details);
+        this.customerList.push(this.createMembers(details));
+      });
+    } else {
+      this.customerList.push(this.createMembers(this.defaultData));
+    }
+    this.adultChildCount();
+  }
+  createMembers(data) {
+    const membertype = data["membertype"];
+    const relationship = data["relationship"] || 'SELF';
+    const insuredname = data["insuredname"] || '';
+    const insureddob = data["insureddob"] || '';
+    let form = this.fb.group({
+      insuredname: [ insuredname, Validators.required],
+      relationship: [relationship, Validators.required],
+      insureddob: [insureddob, Validators.required],
+      membertype: [membertype]
+    });
+    return form;
+  }
+  get Members(): FormArray {
+    return this.angForm.get('Members') as FormArray;
+  }
+  get fval() {
+    return this.angForm.controls;
+  }
+  getDateOfBirth(ev:any) {
+    console.log(ev.value);
+    this.dateofBirth = moment(ev.value).format('YYYY-MM-DD');
+  }
+  getDobData(data){
+    let dob;
+    for(let i=0; i<data.length; i++){
+      dob = moment(data[i]['insureddob']).format('YYYY-MM-DD');
+      this.dobArray[i] = { DateOfBirth: dob};
+    }
+    this.getDobArray(this.dobArray);
+  }
+  getInsuredDateOfBirth(ev:any, i) {
+    let data = this.getFormValues();
+    this.getDobData(data);
+    // this.dobArray[i] = { DateOfBirth: dob };
+    console.log(this.dobArray);
+    console.log(this.dateOfBirthArray);
+  }
+  getDobArray(dobArray){
+    let dob;
+    this.dateOfBirthArray = [];
+    dobArray.forEach((d, i)=> {
+      dob = moment(d["DateOfBirth"]).format('YYYY-MM-DD');
+      var ageDifMs = Date.now() - new Date(dob).getTime();
+      var ageDate = new Date(ageDifMs); // miliseconds from epoch
+      Math.abs(ageDate.getUTCFullYear() - 1970);
+      this.dateOfBirthArray.push({ index: i, date: dob, age: Math.abs(ageDate.getUTCFullYear() - 1970) });
+    });
+  }
   get aaplicantFormControl() {
     return this.applicantForm.controls;
   }
-  getDateOfBirth(ev:any)
-  {
-    console.log(ev.value);
-    this.dateofBirth= moment(ev.value).format('YYYY-MM-DD');   
+  renewalType(val:any) {
+    this.modify = val.target.value == "modify" ? true: false;
   }
-  renewalType(val:any)
-  {
-    console.log(val.target.value);
-  }
-  checkDateOfBirth()
-  {
-    console.log(this.dateofBirth);
-    let date_of_birth=new Date("1999-03-28");
-    if(this.cm.isUndefineORNull(this.dateofBirth))
-    {
+  checkDateOfBirth() {
+    let date_of_birth=new Date("1999-04-01");
+    if (this.cm.isUndefineORNull(this.dateofBirth)) {
       $('#doberror').html("Please enter date of birth");
       return false;
-    }
-    else{  
-      $('#doberror').html(''); 
-      let same = date_of_birth.getTime() === new Date(this.dateofBirth).getTime();  
-      if(same)
-      {
+    } else {
+      $('#doberror').html('');
+      let same = date_of_birth.getTime() === new Date(this.dateofBirth).getTime();
+      if (same) {
         this.showRenewal=true;
-        this.getInsuredDetails();
-      }
-      else{
+        this.fillForm();
+        console.log("Highest age is ", this.highestAge());
+      } else {
         this.showRenewal=false;
         Swal.fire('Oops...', "Birth Date is Mismatch!!!", 'error');
         return false;
       }
-    }  
+    }
   }
-  getInsuredDetails()
-  {
-    this.insureDetails=[{"insuredname":"test1","relationship":"SELF","insureddob":"1976-06-07T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","memberType":"adult"}
-    ,{"insuredname":"test1","relationship":"SPOUSE","insureddob":"1978-06-13T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","memberType":"adult"}
-    ,{"insuredname":"test1233","relationship":"SON","insureddob":"2006-10-10T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","memberType":"child"}
-    ,{"insuredname":"test15434","relationship":"DAUGHTER","insureddob":"2018-10-11T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","memberType":"child"}]
+  highestAge(){
+    this.getDobData(this.getFormValues());
+    let data = this.dateOfBirthArray;
+    let highestAge = 0;
+    let tmp;
+    for (let i = data.length - 1; i >= 0; i--) {
+      tmp = data[i].age;
+      if (tmp > highestAge)
+        highestAge = tmp; 
+    }
+    return highestAge;
+  }
+  removeInsured(index){
+    this.Members.value.forEach((element, i) => {
+      if ( i == index) {
+        this.Members.removeAt(index);
+        this.dobArray.splice(index, 1);
+        this.dateOfBirthArray.splice(index, 1);
+      }
+    });
+  }
+  addInsured(){
+    (this.angForm.controls['Members'] as FormArray).push(this.createMembers(this.defaultData));
+  }
+  getFormValues(){
+    return this.angForm.controls.Members.value;
+  }
+  adultChildCount() {
+    let adultCount = 0;
+    let childCount = 0;
+    this.getFormValues().forEach(element => {
+      element.membertype == 'adult' ? (adultCount += 1 ) : (childCount += 1);
+    });
+    return {adultCount: adultCount, childCount: childCount};
+  }
+  calculateQuote(){
+    this.checkForm();
+    // this.getDobData(this.getFormValues());
+    console.log("Higest age is", this.highestAge());
+    console.log("Adult child count is", this.adultChildCount());
+    localStorage.setItem('insuredDetails', JSON.stringify(this.getFormValues()));
+  }
+
+  msgFunction(msgData) {
+    if (msgData.length>0) {
+      msgData.forEach(element => {
+        if(element['msg'] != '') {
+          Swal.fire('Oops...', element['msg'], 'error');
+          return false;
+        }
+      });
+    }
+  }
+  checkData(){
+    let selfCount = 0;
+    let childCount = 0
+    let adultCount = 0
+    let selfChildCount = 0
+    let data = this.getFormValues();
+    let msg = [];
+    let text;
+    data.forEach((element, i) => {
+      selfCount = element["relationship"]=='SELF'? element["membertype"]=="adult" ? (selfCount += 1): (selfChildCount+=1): selfCount;
+      childCount = element["membertype"]=="child" ? ( childCount += 1 ) : childCount;
+      adultCount = element["membertype"]=="adult" ? ( adultCount += 1 ) : adultCount;
+    });
+    text = selfCount>1 ? "you can add only one self realation": selfCount == 0 ? "Please select atleast one self relation with adult member":'';
+    msg.push({msg: text});
+    childCount > 3 ? msg.push({msg:"You can add maximum 3 children"}) : msg.push({msg: ''});
+    adultCount > 2 ? msg.push({msg:"You can add maximum 2 adults"}) : msg.push({msg: ''});
+    selfChildCount > 0 ? msg.push({msg:"Please select self reltion with an adult"}) : msg.push({msg: ''});
+    this.msgFunction(msg);
+  }
+
+  checkForm() {
+    this.checkData();
+  }
+
+  getInsuredDetails() {
+    this.insureDetails=[{"insuredname":"test1","relationship":"SELF","insureddob":"1976-06-07T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","membertype":"adult"}
+    ,{"insuredname":"test1","relationship":"SPOUSE","insureddob":"1978-06-13T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","membertype":"adult"}
+    ,{"insuredname":"test1233","relationship":"SON","insureddob":"2006-10-10T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","membertype":"child"}
+    ,{"insuredname":"test15434","relationship":"DAUGHTER","insureddob":"2018-10-11T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","membertype":"child"}]
   }
   getDiseaseList() {
     console.log("ok");
