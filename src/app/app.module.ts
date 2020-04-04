@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { RenewalPolicyComponent } from './renewal-policy/renewal-policy.component';
 import { MatDatepickerModule,MatInputModule,MatNativeDateModule,MAT_DATE_LOCALE} from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PolicyDataSyncComponent } from './policy-data-sync/policy-data-sync.component';
+import { SwapComponent } from './swap/swap.component';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -19,7 +19,7 @@ import { RazorPayFallbackComponent } from './razor-pay-fallback/razor-pay-fallba
   declarations: [
     AppComponent,
     RenewalPolicyComponent,
-    PolicyDataSyncComponent,
+    SwapComponent,
     DiseaseModalComponent,
     PaymentComponent,
     RazorPayConfirmationComponent,

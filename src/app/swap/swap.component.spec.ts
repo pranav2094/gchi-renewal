@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PolicyDataSyncComponent } from './policy-data-sync.component';
+import { SwapComponent } from './swap.component';
 
 describe('PolicyDataSyncComponent', () => {
   let component: PolicyDataSyncComponent;

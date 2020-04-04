@@ -24,7 +24,7 @@ export class RenewalPolicyComponent implements OnInit {
   showRenewal:boolean=false;
   insureDetails:any;
   questionList:any;clear
-  iSPED:boolean=false;
+  isPED:boolean=false;
   spinnerTxt:any;
   adultRelationShip = []; adultRelationArray = []; childRelationShip = []; childRelationArray = []; NomineeRelationship = [];
   applicantForm: FormGroup;
@@ -36,13 +36,18 @@ export class RenewalPolicyComponent implements OnInit {
   isAutoRenewal:boolean=false;
   angForm: FormGroup;
   customerList: FormArray;
-  memberType = ['adult', 'child'];
+  memberType = [{type: 'adult', enabled:true}, {type:'child', enabled:true}];
   relationshipArray = ['SELF', 'SPOUSE', 'SON', 'DAUGHTER'];
   modify: boolean = false;
   defaultData = {};
   dateOfBirthArray = [];
   dobArray = [];
   customerDetails: any;
+  showAddInsured: boolean= true;
+  tempFormValues= [];
+  adultCount:any;
+  childCount:any;
+  highestAge:any;
  
   constructor(public matDialog: MatDialog,private router: Router, public cm:CommonMethodsService,public cs:CommonServicesService, private fb: FormBuilder) {
     this.getInsuredDetails();
@@ -79,6 +84,7 @@ export class RenewalPolicyComponent implements OnInit {
       applicantIFSCCode:['',[Validators.required,Validators.pattern(/^[A-Za-z]{4}[a-zA-Z0-9]{7}$/)]]
     });
   }
+
   fillForm(){
     this.customerList = this.angForm.get('Members') as FormArray;
     if (this.insureDetails.length) {
@@ -93,14 +99,16 @@ export class RenewalPolicyComponent implements OnInit {
   }
   createMembers(data) {
     const membertype = data["membertype"];
-    const relationship = data["relationship"] || 'SELF';
+    const relationship = data["relationship"] || '';
     const insuredname = data["insuredname"] || '';
     const insureddob = data["insureddob"] || '';
+    const ped = data["ped"] || 'no';
     let form = this.fb.group({
       insuredname: [ insuredname, Validators.required],
       relationship: [relationship, Validators.required],
       insureddob: [insureddob, Validators.required],
-      membertype: [membertype]
+      membertype: [membertype],
+      ped: [ped]
     });
     return form;
   }
@@ -157,7 +165,8 @@ export class RenewalPolicyComponent implements OnInit {
       if (same) {
         this.showRenewal=true;
         this.fillForm();
-        console.log("Highest age is ", this.highestAge());
+        this.tempFormValues = this.getFormValues();
+        console.log("Highest age is ", this.getHighestAge());
       } else {
         this.showRenewal=false;
         Swal.fire('Oops...', "Birth Date is Mismatch!!!", 'error');
@@ -165,17 +174,17 @@ export class RenewalPolicyComponent implements OnInit {
       }
     }
   }
-  highestAge(){
+  getHighestAge(){
     this.getDobData(this.getFormValues());
     let data = this.dateOfBirthArray;
-    let highestAge = 0;
+    this.highestAge = 0;
     let tmp;
     for (let i = data.length - 1; i >= 0; i--) {
       tmp = data[i].age;
-      if (tmp > highestAge)
-        highestAge = tmp; 
+      if (tmp > this.highestAge)
+      this.highestAge = tmp; 
     }
-    return highestAge;
+    return this.highestAge;
   }
   removeInsured(index){
     this.Members.value.forEach((element, i) => {
@@ -185,25 +194,34 @@ export class RenewalPolicyComponent implements OnInit {
         this.dateOfBirthArray.splice(index, 1);
       }
     });
+    this.checkForm();
   }
   addInsured(){
+    let adultChildCount = this.adultChildCount();
+    // let defaultData = adultChildCount['adultCount'] >= 2 ? 'child' : adultChildCount['childCount'] >= 3 ? 'adult' : 'child' ;
+    let defaultData = adultChildCount['childCount'] >= 3 ? 'adult' : adultChildCount['adultCount'] >= 2? 'child' : 'adult' ;
+    //  adultChildCount['childCount'] > 3 ? 'adult': 'child';   
+    this.defaultData = {membertype: defaultData};
     (this.angForm.controls['Members'] as FormArray).push(this.createMembers(this.defaultData));
+    this.checkForm();
   }
   getFormValues(){
     return this.angForm.controls.Members.value;
   }
-  adultChildCount() {
-    let adultCount = 0;
-    let childCount = 0;
+  adultChildCount() {  
+    this.adultCount = 0;
+    this.childCount = 0;
     this.getFormValues().forEach(element => {
-      element.membertype == 'adult' ? (adultCount += 1 ) : (childCount += 1);
+      element.membertype == 'adult' ? (this.adultCount += 1 ) : (this.childCount += 1);
     });
-    return {adultCount: adultCount, childCount: childCount};
+    
+    
+    return {adultCount: this.adultCount, childCount: this.childCount};
   }
   calculateQuote(){
     this.checkForm();
     // this.getDobData(this.getFormValues());
-    console.log("Higest age is", this.highestAge());
+    console.log("Higest age is", this.highestAge);
     console.log("Adult child count is", this.adultChildCount());
     localStorage.setItem('insuredDetails', JSON.stringify(this.getFormValues()));
   }
@@ -236,18 +254,32 @@ export class RenewalPolicyComponent implements OnInit {
     childCount > 3 ? msg.push({msg:"You can add maximum 3 children"}) : msg.push({msg: ''});
     adultCount > 2 ? msg.push({msg:"You can add maximum 2 adults"}) : msg.push({msg: ''});
     selfChildCount > 0 ? msg.push({msg:"Please select self reltion with an adult"}) : msg.push({msg: ''});
+    this.showAddInsured = data.length >= 5 ? false : true;
     this.msgFunction(msg);
+  }
+  checkthis(eve: any, i){
+    console.log(this.tempFormValues);
+    this.checkForm();
+    // this.tempFormValues.forEach( e=> {
+      if(this.tempFormValues[i]['membertype']!=eve.target.value){
+        this.angForm.controls.Members.value[i]["membertype"] = this.tempFormValues[i]["membertype"];
+        // this.CountryResponse.country = selectedCountry;
+        (<FormGroup>this.angForm.controls.Members)
+            .setValue(this.tempFormValues, {onlySelf: true});
+      }
+    // });
+    // [disabled]="angForm.controls.Members.value[i].membertype==type['type'] ? '': type['enabled']"
+    console.log("option click works")
   }
 
   checkForm() {
     this.checkData();
   }
-
   getInsuredDetails() {
-    this.insureDetails=[{"insuredname":"test1","relationship":"SELF","insureddob":"1976-06-07T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","membertype":"adult"}
-    ,{"insuredname":"test1","relationship":"SPOUSE","insureddob":"1978-06-13T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","membertype":"adult"}
-    ,{"insuredname":"test1233","relationship":"SON","insureddob":"2006-10-10T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","membertype":"child"}
-    ,{"insuredname":"test15434","relationship":"DAUGHTER","insureddob":"2018-10-11T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","membertype":"child"}]
+    this.insureDetails=[{"insuredname":"test1","relationship":"SELF","insureddob":"1976-06-07T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","membertype":"adult", "ped": "yes"}
+    ,{"insuredname":"test1","relationship":"SPOUSE","insureddob":"1978-06-13T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","membertype":"adult", "ped": "no"}
+    ,{"insuredname":"test1233","relationship":"SON","insureddob":"2006-10-10T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","membertype":"child", "ped": "yes"}
+    ,{"insuredname":"test15434","relationship":"DAUGHTER","insureddob":"2018-10-11T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","membertype":"child", "ped": "no"}]
   }
   getDiseaseList() {
     console.log("ok");

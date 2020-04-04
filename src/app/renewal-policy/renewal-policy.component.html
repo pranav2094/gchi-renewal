@@ -81,7 +81,7 @@
         </div>
 
         <form [formGroup]="angForm">
-          <div formArrayName="Members" class="cmnbox2">
+        <div formArrayName="Members" class="cmnbox2">
         <div class="insureDiv"  *ngFor="let member of angForm.get('Members')['controls']; let i = index">
           <div [formGroupName]="i">
           <h4>Insured - {{i+1}} <a href="javascript:void(0)" title="Delete">
@@ -91,8 +91,8 @@
             <div class="row">
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
                 <label>Insured Category</label>
-                  <select class="form-control custom-select" formControlName="membertype"  [attr.disabled]="modify? null : ''" (change)="checkForm()">
-                    <option  value="{{type}}" *ngFor="let type of memberType" [attr.selected]="type==angForm.controls.Members.value[i].membertype ? '': null">{{type | titlecase}}</option>
+                  <select class="form-control custom-select" formControlName="membertype"  [attr.disabled]="modify? null : ''" (change)="checkthis($event, i)">
+                    <option  value="{{type['type']}}" *ngFor="let type of memberType" [attr.selected]="type['type']==angForm.controls.Members.value[i].membertype ? '': null">{{type['type'] | titlecase}}</option>
                   </select>
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
@@ -128,30 +128,38 @@
                   </tr>
                 </table>
               </div>
+
               <div class="col-lg-2 col-md-5 col-sm-5 form-group">
                 <label>Date of Birth</label>
-                <!-- <input type="date" class="form-control dob" placeholder="DD-MM-YYYY" value="insureddob" formControlName="insureddob" (change)="getInsuredDateOfBirth($event, i)"/> -->
                 <mat-form-field class="form-control">
-                  <input matInput [matDatepicker]="picker" id="DateOfBirth{{i+1}}" readonly
-                  [min]="meminDOBHB" [max]="memmaxDOBHB" (click)="picker.open()" (dateChange)="getInsuredDateOfBirth($event, i)" formControlName="insureddob">
+                  <input matInput [matDatepicker]="picker" id="DateOfBirth{{i+1}}" readonly [attr.disabled]="modify? null : 'true'"
+                  [min]="meminDOBHB" [max]="memmaxDOBHB" (click)="picker.open()" (dateChange)="getInsuredDateOfBirth($event,i)" formControlName="insureddob">
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
+                <span id = "doberror" class="error"></span>
               </div>
               <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
                 <label>PED</label>
-                <table class="">
+                <table class="radio1">
+                  <tbody>
                   <tr>
                     <td>
-                      <!-- <input type="radio" id="ped_Yes_1" name="ped_1" disabled/> -->
-                      <span class="withoutUl" id="ped">Yes</span>
+                      <input type="radio" id="ped_{{(i*i)+(i+1)}}" formControlName="ped"
+                        class="custom-control-input" value="yes" [attr.disabled]="modify? null : ''">
+                    <label class="custom-control-label" for="ped_{{(i*i)+(i+1)}}">Yes</label>
                     </td>
                     <td>
-                      <!-- <input type="radio" id="ped_No_1" name="ped_1" checked disabled/> -->
-                      <button type="button" (click)="showPED($event)" class="cstmbtn3">View PED</button>
+                    <input type="radio" id="ped_{{(i*i)+(i+2)}}" formControlName="ped"
+                        class="custom-control-input" value="no" [attr.disabled]="modify? null : ''">
+                    <label class="custom-control-label" for="ped_{{(i*i)+(i+2)}}">No</label>
                     </td>
                   </tr>
-                </table>
+                </tbody></table>
+              </div>
+              <div class="col-lg-1 col-md-2 col-sm-2  col-5 p-0 form-group">
+                <label class="invisible">btn</label>
+                <a (click)="showPED($event)" class="cursorPointer viewPed" *ngIf="angForm.controls.Members.value[i].ped=='yes'">View PED</a>
               </div>
             </div>
           </div>
@@ -159,67 +167,9 @@
         </div>
         </div>
         <div class="text-center mt-3 mb-4">
-          <button type="button" class="cstmbtn2" (click)="addInsured()" *ngIf="modify">Add Insured</button>
+          <button type="button" class="cstmbtn2" (click)="addInsured()" *ngIf="modify && showAddInsured">Add Insured</button>
         </div>
         </form>
-
-        <!-- <div class="insureDiv"  *ngFor="let insure of insureDetails; let i = index ">
-          <h4>Insured - {{i+1}}</h4>
-          <div class="innerdiv">
-            <div class="row">
-              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Insured Category</label>
-                <select class="form-control custom-select" disabled>
-                  <option>Adult</option>
-                  <option>Child</option>
-                </select>
-              </div>
-              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Relationship</label>
-                <select class="form-control custom-select" disabled>
-                  <option>Self</option>
-                  <option>Spouse</option>
-                  <option>Son</option>
-                </select>
-              </div>
-              <div class="col-lg-3 col-12 form-group cstmDiv">
-                <label>Full Name</label>
-                <table>
-                  <tr>
-                    <td width="65">
-                      <select disabled>
-                        <option>Mr.</option>
-                        <option>Mrs.</option>
-                        <option>Ms.</option>
-                      </select>
-                    </td>
-                    <td>
-                      <input type="text" placeholder="Enter Full Name" value="Harish Chakraborti" disabled/>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-              <div class="col-lg-2 col-md-5 col-sm-5 form-group">
-                <label>Date of Birth</label>
-                <input type="text" class="form-control dob" placeholder="DD-MM-YYYY" value="06-02-1982" disabled/>
-              </div>
-              <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
-                <label>PED</label>
-                <table class="">
-                  <tr>
-                    <td>
-                      <span class="withoutUl" id="ped">Yes</span>
-                    </td>
-                    <td *ngIf="iSPED;">
-                      <button type="button" (click)="showPED($event)" class="cstmbtn3">View PED</button>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div> -->
-     
         <div class="insureDiv">
           <h4>Plan Details</h4>
           <div class="innerdiv">
@@ -230,15 +180,15 @@
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 col-6 form-group">
                 <label>Number of Adult</label>
-                <input type="text" class="form-control" value="02" disabled/>
+                <input type="text" class="form-control" value="{{adultCount}}" disabled/>
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 col-6 form-group">
                 <label>Number of Child</label>
-                <input type="text" class="form-control" value="01" disabled/>
+                <input type="text" class="form-control" value="{{childCount}}" disabled/>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
                 <label>Age of Eldest Member</label>
-                <input type="text" class="form-control" value="55 - 60 Years" disabled/>
+                <input type="text" class="form-control" value="{{this.getHighestAge()}} Years" disabled/>
               </div>
             </div>
             <div class="row">

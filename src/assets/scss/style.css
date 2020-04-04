@@ -922,5 +922,9 @@ mat-datepicker-toggle .mat-button-wrapper {
       z-index: 1000000;
       background-color: #2b2b2bb0;
     }
+  .cdk-overlay-container {
+      position: fixed !important;
+      z-index: 100000 !important;
+    }
    
 /*# sourceMappingURL=style.css.map */
