@@ -30,6 +30,7 @@ export class CommonServicesService {
     
     return this.http.get(this.baseURL + endPoint);
   }
+
   postWithParams(endPoint: any, body: any): Observable<any> {
     return this.http.post(this.baseURL + endPoint, body,this.jsonhttpOptions);
   }
@@ -44,11 +45,23 @@ export class CommonServicesService {
       .post(this.baseURL + endPoint, {}, { headers: headers })
       .toPromise();
   }
+  postAPICallWithAuthToken(endPoint, request): Observable<any> {
+    this.jsonhttpOptions = this.checkHttpStatus(localStorage.getItem("basicAuth"));
+    return this.http.post(this.baseURL + endPoint,request ,this.jsonhttpOptions);
+  }
 
   pdfDownload(type: any, policID: any) {
     return (
       this.baseURL + "/api/file/DownloadPDF?type=" + type + "&value=" + policID
     );
+  }
+  checkHttpStatus(auth:string) {
+    return this.jsonhttpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': auth
+      })
+    };
   }
   
 }

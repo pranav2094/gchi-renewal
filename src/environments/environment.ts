@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseURL: 'http://cldiliptrapp03.cloudapp.net:9006/MobileAPI',
+  baseURL: 'http://cldiliptrapp03.cloudapp.net:9006/mobileapi/',
   //baseURL :'https://ipartner.icicilombard.com/mobileagentapi',
   ProdBaseURL:'https://app9.icicilombard.com',
 };

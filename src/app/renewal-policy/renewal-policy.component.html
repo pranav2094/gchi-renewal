@@ -10,7 +10,7 @@
             <div class="formdiv">
               <div class="form-group">
                 <label>My Policy Number</label>
-                <input type="text" class="form-control" placeholder="IL8756800HGT76" />
+                <input type="text" class="form-control" disabled placeholder="{{this.policyDetails.PolicyNumber}}" />
               </div>
               <div class="form-group">
                 <label>Date of Birth</label>
@@ -97,29 +97,31 @@
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
                 <label>Relationship</label>
-                <!-- <select class="form-control custom-select"  formControlName="relationship"  [attr.disabled]="modify? null : ''" (change)="checkForm()">
-                  <option  value="{{relation}}" *ngFor="let relation of relationshipArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">{{relation}}</option>
-                </select> -->
                 <select *ngIf="angForm.controls.Members.value[i].membertype=='adult'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
                   <option  value="" disabled selected>Select Relationship</option>
-                  <option  value={{relation.RelationshipName}} *ngFor="let relation of adultRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
+                  <option  value={{relation.RelationshipID}} *ngFor="let relation of adultRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
                     {{relation.RelationshipName | titlecase}}</option>
                 </select>
-                <select *ngIf="angForm.controls.Members.value[i].membertype=='child'" formControlName="relationship"  class="form-control"  >
+                <select *ngIf="angForm.controls.Members.value[i].membertype=='child'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
                   <option  value="" disabled selected>Select Relationship</option>
-                  <option  value={{relation.RelationshipName}} *ngFor="let relation of childRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
+                  <option  value={{relation.RelationshipID}} *ngFor="let relation of childRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
                     {{relation.RelationshipName | titlecase}}</option>
                 </select>
+                <label
+                  *ngIf="Members.controls[i].get('relationship').errors?.required && isValidFormSubmitted != null && !isValidFormSubmitted"
+                  class="error">
+                  Please Select Relationship
+                </label>
               </div>
               <div class="col-lg-3 col-12 form-group cstmDiv">
                 <label>Full Name</label>
                 <table>
                   <tr>
                     <td width="65">
-                      <select>
-                        <option>Mr.</option>
-                        <option>Mrs.</option>
-                        <option>Ms.</option>
+                      <select class="form-control custom-select"  formControlName="title"  [attr.disabled]="modify? null : ''" >
+                        <option value="1" selected>Mr</option>
+                        <option value="2">Mrs</option>
+                        <option value="3">Ms</option>
                       </select>
                     </td>
                     <td>
@@ -127,17 +129,28 @@
                     </td>
                   </tr>
                 </table>
+                <label
+                *ngIf="Members.controls[i].get('insuredname').errors?.required && isValidFormSubmitted != null && !isValidFormSubmitted"
+                class="error">
+                Please Enter Name
+              </label>
               </div>
 
               <div class="col-lg-2 col-md-5 col-sm-5 form-group">
                 <label>Date of Birth</label>
                 <mat-form-field class="form-control">
-                  <input matInput [matDatepicker]="picker" id="DateOfBirth{{i+1}}" readonly [attr.disabled]="modify? null : 'true'"
-                  [min]="meminDOBHB" [max]="memmaxDOBHB" (click)="picker.open()" (dateChange)="getInsuredDateOfBirth($event,i)" formControlName="insureddob">
+                  <input matInput [matDatepicker]="picker" id="DateOfBirth{{i+1}}" readonly [disabled]="!modify"
+                  [min]="angForm.controls.Members.value[i].membertype=='adult' ? meminDOBHB:childminDOB"
+                  [max]="angForm.controls.Members.value[i].membertype=='adult' ? memmaxDOBHB : childmaxDOB" 
+                  (click)="picker.open()" (dateChange)="getInsuredDateOfBirth($event,i)" formControlName="insureddob">
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
-                <span id = "doberror" class="error"></span>
+                <label
+                *ngIf="Members.controls[i].get('insureddob').errors?.required && isValidFormSubmitted != null && !isValidFormSubmitted"
+                class="error">
+                Please Enter Date of Birth
+              </label>
               </div>
               <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
                 <label>PED</label>
@@ -167,57 +180,63 @@
         </div>
         </div>
         <div class="text-center mt-3 mb-4">
-          <button type="button" class="cstmbtn2" (click)="addInsured()" *ngIf="modify && showAddInsured">Add Insured</button>
+          <a type="button" class="cstmbtn2" (click)="addInsured()" *ngIf="modify && showAddInsured">Add Insured</a>
         </div>
-        </form>
+        <form class="form" [formGroup]="planDetailsForm">
         <div class="insureDiv">
           <h4>Plan Details</h4>
           <div class="innerdiv">
             <div class="row">
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
                 <label>Plan Name</label>
-                <input type="text" class="form-control" value="Health Protect" disabled/>
+                <input type="text" formControlName="planName" class="form-control" [(ngModel)]="plan" disabled  />
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 col-6 form-group">
                 <label>Number of Adult</label>
-                <input type="text" class="form-control" value="{{adultCount}}" disabled/>
+                <input type="text" formControlName="numberOfAdult" class="form-control" [(ngModel)]="adultCount" disabled/>
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 col-6 form-group">
                 <label>Number of Child</label>
-                <input type="text" class="form-control" value="{{childCount}}" disabled/>
+                <input type="text" class="form-control" formControlName="numberOfChild" [(ngModel)]="childCount" disabled />
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
                 <label>Age of Eldest Member</label>
-                <input type="text" class="form-control" value="{{this.getHighestAge()}} Years" disabled/>
+                <input type="text" class="form-control" formControlName="ageEldestMember" [(ngModel)]="highestAge" disabled />
               </div>
             </div>
             <div class="row">
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
                 <label>Policy Tenure</label>
-                <select class="form-control custom-select">
-                  <option>1 Year</option>
-                  <option>2 Year</option>
+                <select class="form-control custom-select"  formControlName="tenure" (change)="changeTenure(tenure)" [attr.disabled]="modify? null : ''" [(ngModel)]="tenure"  >
+                  <option *ngFor="let tenure of tenureArray" value="{{tenure}}" >
+                    {{tenure}} Year
+                  </option>
                 </select>
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
                 <label>Sum Insured</label>
-                <select class="form-control custom-select">
-                  <option>2000</option>
-                  <option>5000</option>
+                <select class="form-control custom-select" formControlName="sumInsured" (change)="changeSI(sumInsured)" [attr.disabled]="modify? null : ''"  [(ngModel)]="sumInsured"  >
+                  <option *ngFor="let si of sumInsuredArray" >
+                    {{si}}
+                  </option>
                 </select>
               </div>
               <div class="col-lg-4 col-md-6 col-sm-6 form-group">
                 <label>Customer State (Applicable for GST)</label>
-                <select class="form-control custom-select">
-                  <option>Maharashtra</option>
+                <select class="form-control custom-select" formControlName="state"  [attr.disabled]="modify? null : ''" [(ngModel)]="state">
+                  <option *ngFor="let st of stateArray"  value="{{st.GSTStateCode}}"  >
+                    {{st.StateName  | titlecase}}
+                  </option>
                 </select>
               </div>
             </div>
           </div>
         </div>
+        </form>
         <div class="text-center mt-3 mb-5">
           <button type="button" class="cstmbtn1" (click)="calculateQuote()">Recalculate</button>
         </div>
+      </form>
         <form class="form" [formGroup]="applicantForm" (ngSubmit)="onSubmit()">
         <div class="insureDiv">
           <h4>Applicant Details</h4>
