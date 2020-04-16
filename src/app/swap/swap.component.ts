@@ -38,16 +38,17 @@ export class SwapComponent implements OnInit {
     };
     let payLoadStr = JSON.stringify(payload);
     this.cs.postWithParams('api/health/ValidatePolicyNoGCHIRenewal', payLoadStr).subscribe((res) => {
+    this.cm.showSpinner(false);
     if(res.StatusCode ==1)
-    {
-      this.cm.showSpinner(false);
+    { 
       policyData = res;
       console.log(policyData);
+      localStorage.basicAuth = res.BasicAuth;
       localStorage.setItem("policyDetails",JSON.stringify(policyData))
       this.router.navigateByUrl('/renewal-policy');
     }
     else{
-      Swal.fire('Oops...', "Something went wrong !!!", 'error');
+      Swal.fire(res.StatusMessage, res.StatusDescription, 'error');
       return false;
 
     }

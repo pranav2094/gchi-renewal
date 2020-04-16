@@ -55,7 +55,7 @@ export class PaymentComponent implements OnInit {
 
   makePayment1(mode: any, ev: any) {
     this.beforeRazorPay().then(() => {
-      this.payByRazorPay(this.commonDataRes, this.paymentMode, ev, this.router);
+      this.payByRazorPay(this.commonDataRes, mode, ev, this.router);
     });
 
   }
@@ -81,7 +81,7 @@ export class PaymentComponent implements OnInit {
       console.log("STR", str);
       localStorage.setItem('commonPayReq', str);
       this.cm.showSpinner(true,this.spinnerTxt);
-      this.cs.postWithParams('/api/Payment/CommonPayment', str).subscribe(res => {
+      this.cs.postAPICallWithAuthToken('api/Payment/CommonPayment', str).subscribe(res => {
         console.log(res);
         this.commonDataRes = res;
         localStorage.setItem('payData', JSON.stringify(res));

@@ -23,7 +23,7 @@ export class RazorPayConfirmationComponent implements OnInit {
   paymantConfirmation(data: any): Promise<any> {
     return new Promise((resolve) => {
       let msg: any;
-      this.cs.getUserData('/api/Payment/CommonPaymentConfirmationByPID?EPaymentID=' + data.EPaymentID).then((res: any) => {
+      this.cs.getUserData('api/Payment/CommonPaymentConfirmationByPID?EPaymentID=' + data.EPaymentID).then((res: any) => {
         console.log(res);
         this.commonPaymentRes = res;
         this.paymentConfRes = res.ConfirmPolicy[0];

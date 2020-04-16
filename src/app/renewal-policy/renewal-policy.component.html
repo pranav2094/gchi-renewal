@@ -36,7 +36,7 @@
       <div class="container">
         <div class="renewDiv">
           <h3 class="text-center">Renewal Premium Payable</h3>
-          <div class="row">
+          <div  class="row">
             <div class="col-xl-7 col-lg-6 form-group">
               <div class="premDiv">
                 <table>
@@ -99,12 +99,12 @@
                 <label>Relationship</label>
                 <select *ngIf="angForm.controls.Members.value[i].membertype=='adult'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
                   <option  value="" disabled selected>Select Relationship</option>
-                  <option  value={{relation.RelationshipID}} *ngFor="let relation of adultRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
+                  <option  value={{relation.RelationshipName}} *ngFor="let relation of adultRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
                     {{relation.RelationshipName | titlecase}}</option>
                 </select>
                 <select *ngIf="angForm.controls.Members.value[i].membertype=='child'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
                   <option  value="" disabled selected>Select Relationship</option>
-                  <option  value={{relation.RelationshipID}} *ngFor="let relation of childRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
+                  <option  value={{relation.RelationshipName}} *ngFor="let relation of childRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
                     {{relation.RelationshipName | titlecase}}</option>
                 </select>
                 <label
@@ -234,7 +234,7 @@
         </div>
         </form>
         <div class="text-center mt-3 mb-5">
-          <button type="button" class="cstmbtn1" (click)="calculateQuote()">Recalculate</button>
+          <button type="button" class="cstmbtn1" *ngIf="modify" (click)="calculateQuote()">Recalculate</button>
         </div>
       </form>
         <form class="form" [formGroup]="applicantForm" (ngSubmit)="onSubmit()">
@@ -368,7 +368,7 @@
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
                 <label>ICICI Bank Account Number</label>
-                <input type="tel" class="form-control" formControlName="applicantAccountNo" placeholder="Enter Account Number" />
+                <input type="text" class="form-control" formControlName="applicantAccountNo" placeholder="Enter Account Number"  />
                 <div *ngIf="submitted && aaplicantFormControl.applicantAccountNo.errors" class="text-danger">
                   <div *ngIf="aaplicantFormControl.applicantAccountNo.errors.required">Account Number is required</div>
                   <div *ngIf="aaplicantFormControl.applicantAccountNo.touched && aaplicantFormControl.applicantAccountNo.errors.pattern">Enter a valid Account Number</div>

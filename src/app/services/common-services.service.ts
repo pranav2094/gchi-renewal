@@ -16,14 +16,7 @@ export class CommonServicesService {
   constructor(public http: HttpClient, public router: Router) {
     this.baseURL = environment.baseURL;
     this.prodBaseURL = environment.ProdBaseURL;
-    //this.authToken = localStorage.getItem("basicAuth");
-    this.authToken = "Basic SU0tNDYyMzY6TG9tYmFyZEAxMjM=";
-    this.jsonhttpOptions  = {
-      headers: new HttpHeaders({
-        'Content-Type':  'application/json',
-        'Authorization': "Basic SU0tNDYyMzY6TG9tYmFyZEAxMjM=",
-      })
-    };
+    this.authToken = localStorage.getItem("basicAuth");
   } 
   getWithParams(endPoint: any): Observable<any>  {
     console.log(endPoint);
@@ -32,7 +25,13 @@ export class CommonServicesService {
   }
 
   postWithParams(endPoint: any, body: any): Observable<any> {
-    return this.http.post(this.baseURL + endPoint, body,this.jsonhttpOptions);
+    let headers = new HttpHeaders();
+    headers = headers.append(
+      "Content-Type",
+      'application/json'
+    );
+
+    return this.http.post(this.baseURL + endPoint, body, { headers: headers });
   }
   getUserData(endPoint: any){
     let headers = new HttpHeaders();
@@ -52,7 +51,7 @@ export class CommonServicesService {
 
   pdfDownload(type: any, policID: any) {
     return (
-      this.baseURL + "/api/file/DownloadPDF?type=" + type + "&value=" + policID
+      this.baseURL + "api/file/DownloadPDF?type=" + type + "&value=" + policID
     );
   }
   checkHttpStatus(auth:string) {
