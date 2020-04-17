@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
 import { CommonMethodsService } from 'src/app/services/common-methods.service';
-import {CommonServicesService} from 'src/app/services/common-services.service'
+import { CommonServicesService } from 'src/app/services/common-services.service'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import * as _ from 'underscore';
 import { Router } from '@angular/router';
 import { DiseaseModalComponent } from '../disease-modal/disease-modal.component';
-import { FormGroup,Validators, FormBuilder,FormArray } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
+import { localizedString } from '@angular/compiler/src/output/output_ast';
 
 
 declare var $: any;
@@ -18,52 +19,53 @@ declare var $: any;
   styleUrls: ['./renewal-policy.component.scss']
 })
 export class RenewalPolicyComponent implements OnInit {
-  memmaxDOBHB: any; meminDOBHB: any; 
+  memmaxDOBHB: any; meminDOBHB: any;
   childmaxDOB: any; childminDOB: any;
-  snackbarMessage:any;
-  dateofBirth:any;
-  showRenewal:boolean=false;
-  insureDetails:any;
-  questionList:any;clear
-  isPED:boolean=false;
-  spinnerTxt:any;
+  snackbarMessage: any;
+  dateofBirth: any;
+  showRenewal: boolean = false;
+  insureDetails: any;
+  applicantDetails: any;
+  questionList: any; clear
+  isPED: boolean = false;
+  spinnerTxt: any;
   adultRelationShip = []; adultRelationArray = []; childRelationShip = []; childRelationArray = []; NomineeRelationship = [];
   applicantForm: FormGroup;
   planDetailsForm: FormGroup;
-  submitted:boolean= false;
-  pinData:any;
-  stateCode:any;cityCode:any;
-  isWhatsappConsent:boolean=false;
-  isPolicyKit:boolean=false;
-  isAutoRenewal:boolean=false;
+  submitted: boolean = false;
+  pinData: any;
+  stateCode: any; cityCode: any;
+  isWhatsappConsent: boolean = false;
+  isPolicyKit: boolean = false;
+  isAutoRenewal: boolean = false;
   angForm: FormGroup;
   customerList: FormArray;
-  memberType = [{type: 'adult', enabled:true}, {type:'child', enabled:true}];
+  memberType = [{ type: 'adult', enabled: true }, { type: 'child', enabled: true }];
   modify: boolean = false;
   defaultData = {};
   dateOfBirthArray = [];
   dobArray = [];
   customerDetails: any;
-  showAddInsured: boolean= true;
-  tempFormValues= [];
-  adultCount:any;
-  childCount:any;
-  highestAge:any;
-  policyDetails:any;
+  showAddInsured: boolean = true;
+  tempFormValues = [];
+  adultCount: any;
+  childCount: any;
+  highestAge: any;
+  policyDetails: any;
   isValidFormSubmitted = null;
-  tenureArray:any=['1','2','3','4','5'];
-  sumInsuredArray:any=['500000','700000','1000000','1500000','2000000'];
-  titleIDArray:any=["Mr","Mrs","Ms"];
-  tenure:any="1";
-  sumInsured:any="500000";
-  plan:any;
-  stateArray:any=[];
-  state:any;
-  
-  constructor(public matDialog: MatDialog,private router: Router, public cm:CommonMethodsService,public cs:CommonServicesService, private fb: FormBuilder) {
+  tenureArray: any = ['1', '2', '3', '4', '5'];
+  sumInsuredArray: any = ['500000', '700000', '1000000', '1500000', '2000000'];
+  titleIDArray: any = ["Mr", "Mrs", "Ms"];
+  tenure: any = "1";
+  sumInsured: any = "500000";
+  plan: any;
+  stateArray: any = [];
+  state: any;
+
+  constructor(public matDialog: MatDialog, private router: Router, public cm: CommonMethodsService, public cs: CommonServicesService, private fb: FormBuilder) {
     this.policyDetails = JSON.parse(localStorage.getItem('policyDetails'));
-   
-   }
+
+  }
 
   ngOnInit(): void {
     var today = new Date();
@@ -74,33 +76,18 @@ export class RenewalPolicyComponent implements OnInit {
     this.angForm = this.fb.group({
       Members: this.fb.array([])
     });
-    this.applicantForm = this.fb.group({
-      applicantName: ['', Validators.required],
-      applicantAadhar: ['', [Validators.required,Validators.pattern(/^\d{4}\d{4}\d{4}$/)]],
-      applicantPan: ['', [Validators.required,Validators.pattern(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/)]],
-      applicantAddress1: ['',  [Validators.required]],
-      applicantAddress2: ['', [Validators.required]],
-      applicantPinCode: ['', [Validators.required]],
-      applicantState: ['', [Validators.required]],
-      applicantCity: ['', [Validators.required]],
-      applicantWhatsappConsent:[''],
-      applicantPolicyKit:[''],
-      applicantAutoRenewal:[''],
-      applicantAccountName:['',[Validators.required]],
-      applicantAccountNo:['',[Validators.required,Validators.pattern(/^\d{9,18}$/)]],
-      applicantIFSCCode:['',[Validators.required,Validators.pattern(/^[A-Za-z]{4}[a-zA-Z0-9]{7}$/)]]
-    });
+
 
     this.planDetailsForm = this.fb.group({
-      planName:[Validators.required],
-      numberOfAdult:[Validators.required],
-      numberOfChild:[Validators.required],
-      ageEldestMember:[Validators.required],
-      tenure:[],
-      sumInsured:[],
-      state:[]
+      planName: [Validators.required],
+      numberOfAdult: [Validators.required],
+      numberOfChild: [Validators.required],
+      ageEldestMember: [Validators.required],
+      tenure: [],
+      sumInsured: [],
+      state: []
     })
-    
+
     this.memmaxDOBHB = new Date(today.setFullYear(new Date().getFullYear() - 21));
     this.meminDOBHB = new Date(today.setFullYear(new Date().getFullYear() - 75));
     this.memmaxDOBHB = moment(this.memmaxDOBHB).format('YYYY-MM-DD');
@@ -111,7 +98,7 @@ export class RenewalPolicyComponent implements OnInit {
     this.childminDOB = moment(this.childminDOB).format('YYYY-MM-DD');
   }
 
-  fillForm(data){
+  fillForm(data) {
     this.customerList = this.angForm.get('Members') as FormArray;
     this.customerList.clear();
     if (data) {
@@ -123,7 +110,52 @@ export class RenewalPolicyComponent implements OnInit {
       this.customerList.push(this.createMembers(this.defaultData));
     }
     this.adultChildCount();
-  
+    this.applicantDetails = JSON.parse(localStorage.getItem('applicantDetails'));
+    this.applicantDetails.forEach(det => {
+      this.applicantForm = this.fb.group({
+        applicantName: [det.applicantName || '', Validators.required],
+        // applicantAadhar: ['', [Validators.required,Validators.pattern(/^\d{4}\d{4}\d{4}$/)]],
+        // applicantPan: ['', [Validators.required,Validators.pattern(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/)]],
+        mobileNumber: [det.mobileNumber || '', [Validators.required]],
+        emailid: [det.emailid || '', [Validators.required]],
+        applicantAadhar: [det.aadharNo || ''],
+        applicantPan: [det.panNo || ''],
+        applicantAddress1: [det.address1 || '', [Validators.required]],
+        applicantAddress2: [det.address2 || '', [Validators.required]],
+        applicantPinCode: [det.pincode || '', [Validators.required]],
+        applicantState: [det.city || '', [Validators.required]],
+        applicantCity: [det.state || '', [Validators.required]],
+        applicantWhatsappConsent: [''],
+        applicantPolicyKit: [''],
+        applicantAutoRenewal: [''],
+        applicantAccountName: [''],
+        applicantAccountNo: [''],
+        applicantIFSCCode: ['']
+      });
+
+    });
+    const applicantAccountName = this.applicantForm.get('applicantAccountName');
+    const applicantAccountNo = this.applicantForm.get('applicantAccountNo');
+    const applicantIFSCCode = this.applicantForm.get('applicantIFSCCode');
+    this.applicantForm.get('applicantAutoRenewal').valueChanges.subscribe(
+      (valid: boolean) => {
+        this.isAutoRenewal = valid;
+        if (valid) {
+          applicantAccountName.setValidators([Validators.required]);
+          applicantAccountNo.setValidators([Validators.required, Validators.pattern(/^\d{9,18}$/)]);
+          applicantIFSCCode.setValidators([Validators.required]);
+        }
+        else {
+          applicantAccountName.clearValidators();
+          applicantAccountNo.clearValidators();
+          applicantIFSCCode.clearValidators();
+        }
+        applicantAccountName.updateValueAndValidity();
+        applicantAccountNo.updateValueAndValidity();
+        applicantIFSCCode.updateValueAndValidity();
+      });
+
+
   }
   createMembers(data) {
     const membertype = data["membertype"];
@@ -131,10 +163,10 @@ export class RenewalPolicyComponent implements OnInit {
     const insuredname = data["insuredname"] || '';
     const insureddob = data["insureddob"] || '';
     const ped = data["ped"] || 'no';
-    const title = data['title']||''
+    const title = data['title'] || ''
     let form = this.fb.group({
-      title:[title,Validators.required],
-      insuredname: [ insuredname, Validators.required],
+      title: [title, Validators.required],
+      insuredname: [insuredname, Validators.required],
       relationship: [relationship, Validators.required],
       insureddob: [insureddob, Validators.required],
       membertype: [membertype],
@@ -148,31 +180,31 @@ export class RenewalPolicyComponent implements OnInit {
   get fval() {
     return this.angForm.controls;
   }
-  getDateOfBirth(ev:any) {
+  getDateOfBirth(ev: any) {
     console.log(ev.value);
     this.dateofBirth = moment(ev.value).format('YYYY-MM-DD');
   }
-  getDobData(data){
+  getDobData(data) {
     let dob;
-    for(let i=0; i<data.length; i++){
+    for (let i = 0; i < data.length; i++) {
       dob = moment(data[i]['insureddob']).format('YYYY-MM-DD');
-      this.dobArray[i] = { DateOfBirth: dob};
+      this.dobArray[i] = { DateOfBirth: dob };
     }
     this.getDobArray(this.dobArray);
   }
-  getInsuredDateOfBirth(ev:any, i) {
+  getInsuredDateOfBirth(ev: any, i) {
     let data = this.getFormValues();
     this.getDobData(data);
-    console.log(this.dobArray);
-    console.log(this.dateOfBirthArray);
+    this.getHighestAge();
+
   }
-  getDobArray(dobArray){
+  getDobArray(dobArray) {
     let dob;
     this.dateOfBirthArray = [];
-    dobArray.forEach((d, i)=> {
+    dobArray.forEach((d, i) => {
       dob = moment(d["DateOfBirth"]).format('YYYY-MM-DD');
       console.log(dob);
-      
+
       var ageDifMs = Date.now() - new Date(dob).getTime();
       var ageDate = new Date(ageDifMs); // miliseconds from epoch
       Math.abs(ageDate.getUTCFullYear() - 1970);
@@ -182,17 +214,18 @@ export class RenewalPolicyComponent implements OnInit {
   get aaplicantFormControl() {
     return this.applicantForm.controls;
   }
-  renewalType(val:any) {
-    this.modify = val.target.value == "modify" ? true: false;
-    if(!this.modify){
+  renewalType(val: any) {
+    this.modify = val.target.value == "modify" ? true : false;
+    localStorage.modify = this.modify;
+    if (!this.modify) {
       this.fillForm(this.customerDetails);
     }
   }
   checkDateOfBirth() {
-    
+
     let date_of_birth = moment(new Date(this.policyDetails.CustDob)).format('YYYY-MM-DD');
     console.log(date_of_birth);
-    
+
     if (this.cm.isUndefineORNull(this.dateofBirth)) {
       $('#doberror').html("Please enter date of birth");
       return false;
@@ -200,33 +233,38 @@ export class RenewalPolicyComponent implements OnInit {
       $('#doberror').html('');
       let same = new Date(date_of_birth).getTime() === new Date(this.dateofBirth).getTime();
       if (same) {
-        this.showRenewal=true;
-        this.RNFetch(this.policyDetails.PolicyNumber); 
-        this.fillForm(this.insureDetails);      
+        this.showRenewal = true;
+        this.RNFetch(this.policyDetails.PolicyNumber);
+        this.fillForm(this.insureDetails);
         this.tempFormValues = this.getFormValues();
-     
+        console.log("Highest age is ", this.getHighestAge());
+
       } else {
-        this.showRenewal=false;
-        Swal.fire('Oops...', "Birth Date is Mismatch!!!", 'error');
+        this.showRenewal = false;
+        $('#doberror').html("Birth Date is mismatch");
         return false;
       }
     }
   }
-  getHighestAge(){
+  getHighestAge() {
     this.getDobData(this.getFormValues());
     let data = this.dateOfBirthArray;
     this.highestAge = 0;
     let tmp;
+    console.log(data);
+
     for (let i = data.length - 1; i >= 0; i--) {
       tmp = data[i].age;
       if (tmp > this.highestAge)
-      this.highestAge = tmp; 
+        this.highestAge = tmp;
     }
+    console.log(this.highestAge);
+
     return this.highestAge;
   }
-  removeInsured(index){
+  removeInsured(index) {
     this.Members.value.forEach((element, i) => {
-      if ( i == index) {
+      if (i == index) {
         this.Members.removeAt(index);
         this.dobArray.splice(index, 1);
         this.dateOfBirthArray.splice(index, 1);
@@ -236,66 +274,64 @@ export class RenewalPolicyComponent implements OnInit {
     console.log("Higest age is", this.highestAge);
     console.log("Adult child count is", this.adultChildCount());
   }
-  addInsured(){
+  addInsured() {
     let adultChildCount = this.adultChildCount();
     // let defaultData = adultChildCount['adultCount'] >= 2 ? 'child' : adultChildCount['childCount'] >= 3 ? 'adult' : 'child' ;
-    let defaultData = adultChildCount['childCount'] >= 3 ? 'adult' : adultChildCount['adultCount'] >= 2? 'child' : 'adult' ;
+    let defaultData = adultChildCount['childCount'] >= 3 ? 'adult' : adultChildCount['adultCount'] >= 2 ? 'child' : 'adult';
     //  adultChildCount['childCount'] > 3 ? 'adult': 'child';   
-    this.defaultData = {membertype: defaultData};
+    this.defaultData = { membertype: defaultData };
     (this.angForm.controls['Members'] as FormArray).push(this.createMembers(this.defaultData));
     this.checkForm();
     console.log("Higest age is", this.highestAge);
     console.log("Adult child count is", this.adultChildCount());
   }
-  getFormValues(){
+  getFormValues() {
     return this.angForm.controls.Members.value;
   }
-  adultChildCount() {  
+  adultChildCount() {
     this.adultCount = 0;
     this.childCount = 0;
     this.getFormValues().forEach(element => {
-      element.membertype == 'adult' ? (this.adultCount += 1 ) : (this.childCount += 1);
-    }); 
-    return {adultCount: this.adultCount, childCount: this.childCount};
+      element.membertype == 'adult' ? (this.adultCount += 1) : (this.childCount += 1);
+    });
+    return { adultCount: this.adultCount, childCount: this.childCount };
   }
 
-  calculateQuote(){
-    let membersAray=[];
+  calculateQuote() {
+    let membersAray = [];
     this.isValidFormSubmitted = false;
     if (this.angForm.invalid) {
       return;
     }
     this.checkForm();
     this.isValidFormSubmitted = true;
-    console.log("Plan detaila form",this.planDetailsForm.value);
+    console.log("Plan detaila form", this.planDetailsForm.value);
     localStorage.setItem('insuredDetails', JSON.stringify(this.getFormValues()));
 
     this.insureDetails = JSON.parse(localStorage.getItem('insuredDetails'));
-    console.log("InsuredDetails",this.insureDetails);
-    
-    this.insureDetails.forEach(function(element) {   
-      console.log(element);
-      
-      let obj ={
-        MemberType:element.membertype,
-        TitleID:element.title ,
+    console.log("InsuredDetails", this.insureDetails);
+
+    this.insureDetails.forEach(function (element) {
+      let obj = {
+        MemberType: element.membertype,
+        TitleID: element.title,
         Name: element.insuredname,
         RelationshipID: element.relationship,
         RelationshipName: element.relationship,
-        DOB:moment(element.insureddob).format('DD-mm-YYYY'),
+        DOB: moment(element.insureddob).format('DD-mm-YYYY'),
         Height: "0.0",
         Weight: "0",
         isExisting: "true",
         OtherDisease: "",
         Ailments: ""
-    }
-    console.log(obj);
-    
+      }
+      console.log(obj);
+
       membersAray.push(obj);
     }.bind(this));
     // console.log(membersAray);
 
-    
+
     // let requestBody={
     //   "UserType": "AGENT",
     //   "PolicyNo": this.policyDetails.policyNumber,
@@ -325,7 +361,7 @@ export class RenewalPolicyComponent implements OnInit {
     //   "Members": {
     //       "Member": [
     //           {
-                 
+
     //           }
     //       ]
     //   },
@@ -343,16 +379,16 @@ export class RenewalPolicyComponent implements OnInit {
 
 
   msgFunction(msgData) {
-    if (msgData.length>0) {
+    if (msgData.length > 0) {
       msgData.forEach(element => {
-        if(element['msg'] != '') {
+        if (element['msg'] != '') {
           Swal.fire('Oops...', element['msg'], 'error');
           return false;
         }
       });
     }
   }
-  checkData(){
+  checkData() {
     let selfCount = 0;
     let childCount = 0
     let adultCount = 0
@@ -363,90 +399,94 @@ export class RenewalPolicyComponent implements OnInit {
 
     data.forEach((element, i) => {
 
-  
-      selfCount = element["relationship"]=='SELF'? element["membertype"]=="adult" ? (selfCount += 1): (selfChildCount+=1): selfCount;
-      childCount = element["membertype"]=="child" ? ( childCount += 1 ) : childCount;
-      adultCount = element["membertype"]=="adult" ? ( adultCount += 1 ) : adultCount;
+
+      selfCount = element["relationship"] == 'SELF' ? element["membertype"] == "adult" ? (selfCount += 1) : (selfChildCount += 1) : selfCount;
+      childCount = element["membertype"] == "child" ? (childCount += 1) : childCount;
+      adultCount = element["membertype"] == "adult" ? (adultCount += 1) : adultCount;
     });
-    text = selfCount>1 ? "you can add only one self realation": selfCount == 0 ? "Please select atleast one self relation with adult member":'';
-    msg.push({msg: text});
-    childCount > 3 ? msg.push({msg:"You can add maximum 3 children"}) : msg.push({msg: ''});
-    adultCount > 2 ? msg.push({msg:"You can add maximum 2 adults"}) : msg.push({msg: ''});
-    selfChildCount > 0 ? msg.push({msg:"Please select self reltion with an adult"}) : msg.push({msg: ''});
+    text = selfCount > 1 ? "you can add only one self realation" : selfCount == 0 ? "Please select atleast one self relation with adult member" : '';
+    msg.push({ msg: text });
+    childCount > 3 ? msg.push({ msg: "You can add maximum 3 children" }) : msg.push({ msg: '' });
+    adultCount > 2 ? msg.push({ msg: "You can add maximum 2 adults" }) : msg.push({ msg: '' });
+    selfChildCount > 0 ? msg.push({ msg: "Please select self reltion with an adult" }) : msg.push({ msg: '' });
     this.showAddInsured = data.length >= 5 ? false : true;
     this.msgFunction(msg);
   }
-  
-  checkthis(eve: any, i){
+
+  checkthis(eve: any, i) {
     console.log(this.tempFormValues);
     this.checkForm();
     // this.tempFormValues.forEach( e=> {
-      if(this.tempFormValues[i]['membertype']!=eve.target.value){
-        this.angForm.controls.Members.value[i]["membertype"] = this.tempFormValues[i]["membertype"];
-        // this.CountryResponse.country = selectedCountry;
-        (<FormGroup>this.angForm.controls.Members)
-            .setValue(this.tempFormValues, {onlySelf: true});
-      }
+    if (this.tempFormValues[i]['membertype'] != eve.target.value) {
+      this.angForm.controls.Members.value[i]["membertype"] = this.tempFormValues[i]["membertype"];
+      // this.CountryResponse.country = selectedCountry;
+      (<FormGroup>this.angForm.controls.Members)
+        .setValue(this.tempFormValues, { onlySelf: true });
+    }
     console.log("option click works")
   }
 
   checkForm() {
     this.checkData();
   }
-  RNFetch(PolicyNo:any) {
-    console.log(PolicyNo);
-    
+  RNFetch(PolicyNo: any) {
     let policyData;
     let payload = {
       "UserType": "CUSTOMER",
       "PolicyNo": PolicyNo,
-      "IsGchiRenewal":true
+      "IsGchiRenewal": true
     };
-    this.insureDetails=[{"title":"1","insuredname":"test1","relationship":"SELF","insureddob":"1976-06-07T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","membertype":"adult", "ped": "yes"}
-    ,{"title":"2","insuredname":"test1","relationship":"SPOUSE","insureddob":"1978-06-13T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","membertype":"adult", "ped": "no"}
-    ,{"title":"1","insuredname":"test1233","relationship":"DAUGHTER","insureddob":"2006-10-10T18:30:00.000Z","insureddiseas":"no","insuredgender":"Male","membertype":"child", "ped": "yes"}
-    ,{"title":"3","insuredname":"test15434","relationship":"SON","insureddob":"2018-10-11T18:30:00.000Z","insureddiseas":"no","insuredgender":"Female","membertype":"child", "ped": "no"}]
 
-    this.plan="Health Plan";
-    this.state ="27";
+    this.insureDetails = [{ "title": "1", "insuredname": "Yogendra Desai", "relationship": "FATHER", "insureddob": "1976-06-07T18:30:00.000Z", "insureddiseas": "no", "insuredgender": "Male", "membertype": "adult", "ped": "yes" }
+      , { "title": "2", "insuredname": "Pooja Desai", "relationship": "SPOUSE", "insureddob": "1978-06-13T18:30:00.000Z", "insureddiseas": "no", "insuredgender": "Female", "membertype": "adult", "ped": "no" }
+      , { "title": "1", "insuredname": "Amruta Desai", "relationship": "DAUGHTER", "insureddob": "2006-10-10T18:30:00.000Z", "insureddiseas": "no", "insuredgender": "Male", "membertype": "child", "ped": "yes" }
+      , { "title": "3", "insuredname": "Avinash Desai", "relationship": "SON", "insureddob": "2018-10-11T18:30:00.000Z", "insureddiseas": "no", "insuredgender": "Female", "membertype": "child", "ped": "no" }]
+
+    this.applicantDetails = [
+      { "applicantName": "Yogendra Desai", "mobileNumber": "9821804575", "emailid": "yog123@gmail.com", "aadharNo": "", "panNo": "", "address1": "Gandhi Nagar", "address2": "Vikhroli", "pincode": "400706", "city": "Mumbai", "state": "Maharashtra" }
+    ]
+
+
+    this.plan = "Health Plan";
+    this.state = "27";
     localStorage.setItem('insuredDetails', JSON.stringify(this.insureDetails));
+    localStorage.setItem('applicantDetails', JSON.stringify(this.applicantDetails));
     this.customerDetails = JSON.parse(localStorage.getItem('insuredDetails'));
     console.log(payload);
-    
-    let payLoadStr = JSON.stringify(payload);
-    this.cs.postAPICallWithAuthToken('api/renewal/HealthPolicyRenewalRN', payLoadStr).subscribe((res) => {
-    this.cm.showSpinner(false);
-    if(res.StatusCode ==1)
-    {
-      policyData = res;
-      console.log(policyData);
-     
-    }
-    else{
-      // Swal.fire('Oops...', "Something went wrong !!!", 'error');
-      // return false;
+    this.getHighestAge();
 
-    }
-    });
+    // this.spinnerTxt = "Please wait... We are fetching policy details."
+    // this.cm.showSpinner(true,this.spinnerTxt);
+    // let payLoadStr = JSON.stringify(payload);
+    // this.cs.postAPICallWithAuthToken('api/renewal/HealthPolicyRenewalRN', payLoadStr).subscribe((res) => {
+    // this.cm.showSpinner(false);
+    // if(res.StatusCode ==1)
+    // {
+    //   policyData = res;
+    //   console.log(policyData);
 
-   
+
+
+    // }
+    // else{
+    //   // Swal.fire('Oops...', "Something went wrong !!!", 'error');
+    //   // return false;
+
+    // }
+    // });
+
+
   }
-  changeSI(val:any)
-  {
+  changeSI(val: any) {
     console.log(val);
-    
   }
-  changeTenure(val:any){
+  changeTenure(val: any) {
     console.log(val);
-    
   }
-  getAllState()
-  {
-    this.stateArray=[];
-    this.cs.postWithParams('api/MotorMaster/GetAllStates','').subscribe(res => {
-      this.stateArray = res;   
-      console.log(this.stateArray);
-      
+  getAllState() {
+    this.stateArray = [];
+    this.cs.postWithParams('api/MotorMaster/GetAllStates', '').subscribe(res => {
+      this.stateArray = res;
     }, err => {
       console.log(err);
     });
@@ -454,7 +494,6 @@ export class RenewalPolicyComponent implements OnInit {
   }
   getDiseaseList() {
     this.cs.getWithParams('api/healthmaster/GetHealthAilmentList?isAgent=YES').subscribe(res => {
-      console.log("JSON Ailment", res.Details);
       this.questionList = res.Details;
     }, err => {
       console.log(err);
@@ -462,7 +501,7 @@ export class RenewalPolicyComponent implements OnInit {
   }
   getRelation() {
     this.spinnerTxt = "Please wait... We are fetching data."
-    this.cm.showSpinner(true,this.spinnerTxt);
+    this.cm.showSpinner(true, this.spinnerTxt);
     this.cs.postAPICallWithAuthToken('api/healthmaster/GetHealthProposalRelationships?Product=CHI', '').subscribe(res => {
       this.cm.showSpinner(false);
       this.adultRelationArray = [];
@@ -474,8 +513,8 @@ export class RenewalPolicyComponent implements OnInit {
           this.adultRelationArray.push(relation);
         } else {
           this.childRelationArray.push(relation);
-          this.childRelationArray  = this.childRelationArray.filter(function (x) { return x.RelationshipName !== "SELF" && x.RelationshipName !== "SPOUSE" && x.RelationshipName !== "EMPLOYEE"; });
-          
+          this.childRelationArray = this.childRelationArray.filter(function (x) { return x.RelationshipName !== "SELF" && x.RelationshipName !== "SPOUSE" && x.RelationshipName !== "EMPLOYEE"; });
+
         }
       });
       res.NomineeAppointeeRelationship.forEach((rel: any) => {
@@ -486,9 +525,6 @@ export class RenewalPolicyComponent implements OnInit {
       this.NomineeRelationship = _.sortBy(this.NomineeRelationship, 'RelationshipName');
       window.localStorage.nomineeRelationship = JSON.stringify(this.NomineeRelationship);
       this.childRelationArray = _.sortBy(this.childRelationArray, 'RelationshipName');
-      console.log("adult array", this.adultRelationArray);
-      console.log("child array", this.childRelationArray);
-
     }, err => {
       // console.log(err);
     });
@@ -497,12 +533,12 @@ export class RenewalPolicyComponent implements OnInit {
 
     if (ev.target.value.length == 6) {
       this.spinnerTxt = "Please wait... We are fetching data."
-      this.cm.showSpinner(true,this.spinnerTxt);
+      this.cm.showSpinner(true, this.spinnerTxt);
       let body = ev.target.value;
       this.cs.postAPICallWithAuthToken('api/rtolist/GetStatesCityByPin', body).subscribe((res) => {
         this.cm.showSpinner(false);
         this.pinData = res;
-        console.log("pincode",this.pinData);
+        console.log("pincode", this.pinData);
         if (this.pinData.StatusCode == 1) {
           this.stateCode = this.pinData.StateId;
           this.cityCode = this.pinData.CityList[0].CityID;
@@ -523,11 +559,15 @@ export class RenewalPolicyComponent implements OnInit {
       });
     }
   }
-  showPED(ev:any)
-  {
+  checkAutoRenewal() {
+    console.log("click");
+
+
+  }
+  showPED(ev: any, i) {
     const dialogConfig = new MatDialogConfig();
     // The user can't close the dialog by clicking outside its body
-    dialogConfig.disableClose = false;
+    dialogConfig.disableClose = true;
     dialogConfig.id = "modal-component";
     dialogConfig.height = "500px";
     dialogConfig.width = "600px";
@@ -538,13 +578,13 @@ export class RenewalPolicyComponent implements OnInit {
 
   onSubmit() {
     console.log("submit");
-    
+
     this.submitted = true;
     if (this.applicantForm.valid) {
       alert('Form Submitted succesfully!!!\n Check the values in browser console.');
       console.table(this.applicantForm.value);
       this.router.navigateByUrl('/payment');
-      
+
     }
   }
 

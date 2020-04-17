@@ -19,13 +19,10 @@
           </tr>
         </table>
       </section>
-      <div class="modal-foot col-12" style="margin-bottom: 10px;">
-        <div class="row">
-          <div class="col-12 text-center">
-            <button class="modalBackbtn proceed"  type="submit" value="PROCEED">PROCEED</button>
-            <!-- <a class="modalBackbtn proceed"  data-dismiss="modal">PROCEED</a> -->
-          </div>
-        </div>
+      <div class="modal-foot col-12 text-center" style="margin-bottom: 10px;">
+        <button type="submit" value="PROCEED" [attr.disabled]="modify? null : ''"  class="cstmbtn1">Proceed</button>
+        <button type="button" (click)="cancelPED()"  class="prevBtn cstmbtn2" style="margin-left: 5px;">Cancel</button>
+        
       </div>
     </form>
   </div>

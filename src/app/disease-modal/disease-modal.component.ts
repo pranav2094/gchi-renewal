@@ -12,8 +12,10 @@ import {CommonMethodsService} from 'src/app/services/common-methods.service'
 export class DiseaseModalComponent implements OnInit {
 
   diseaseForm: FormGroup;
+  modify:boolean=false;
   diseasesList;
   constructor(public dialogRef: MatDialogRef<DiseaseModalComponent>, public cm:CommonMethodsService,public fb: FormBuilder) { 
+    this.modify = localStorage.modify;
     this.diseaseForm = this.fb.group({
       checkArray: this.fb.array([], [Validators.required])
     })
@@ -27,13 +29,26 @@ export class DiseaseModalComponent implements OnInit {
     this.dialogRef.close();
   }
   saveDisease() {
-    console.log("MODAL==", this.diseaseForm.value);
     if (this.diseaseForm.value != undefined) {
+
       this.cm.selctedDiseaseList = this.diseaseForm.value;
-      this.dialogRef.close();
+      localStorage.setItem("PEDList",JSON.stringify(this.cm.selctedDiseaseList.checkArray));
+      if(this.cm.selctedDiseaseList.checkArray.length==0)
+      {
+        alert("Please select Pre Existing Disease from list");
+         
+      }
+      else{
+        this.dialogRef.close();
+      }
     }
   }
 
+  cancelPED()
+  {
+    this.dialogRef.close();
+    localStorage.isPED ="no";
+  }
   onCheckboxChange(e) {
     const checkArray: FormArray = this.diseaseForm.get('checkArray') as FormArray;
 

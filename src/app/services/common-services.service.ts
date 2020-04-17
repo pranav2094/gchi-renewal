@@ -19,8 +19,6 @@ export class CommonServicesService {
     this.authToken = localStorage.getItem("basicAuth");
   } 
   getWithParams(endPoint: any): Observable<any>  {
-    console.log(endPoint);
-    
     return this.http.get(this.baseURL + endPoint);
   }
 
