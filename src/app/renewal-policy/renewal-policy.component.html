@@ -23,7 +23,7 @@
                 <span id = "doberror" class="error"></span>
               </div>
               <div class="text-center">
-                <button type="button" (click)="checkDateOfBirth()" class="cstmbtn1">Renew</button>
+                <button type="button" (click)="checkDateOfBirth(target);" class="cstmbtn1">Renew</button>
               </div>
             </div>
           </div>
@@ -31,6 +31,8 @@
       </div>
     </div>
   </section>
+  <div #target style="height: 100px;">
+  </div>
   <section class="container-fluid mainSec" *ngIf="showRenewal">
     <div class="row">
       <div class="container">
@@ -90,13 +92,13 @@
           <div class="innerdiv">
             <div class="row">
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Insured Category*</label>
+                <label >Insured Category</label>
                   <select class="form-control custom-select" formControlName="membertype"  [attr.disabled]="modify? null : ''" (change)="checkthis($event, i)">
                     <option  value="{{type['type']}}" *ngFor="let type of memberType" [attr.selected]="type['type']==angForm.controls.Members.value[i].membertype ? '': null">{{type['type'] | titlecase}}</option>
                   </select>
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Relationship *</label>
+                <label [ngClass]="{ 'required': modify}">Relationship</label>
                 <select *ngIf="angForm.controls.Members.value[i].membertype=='adult'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
                   <option  value="" disabled selected>Select Relationship</option>
                   <option  value={{relation.RelationshipName}} *ngFor="let relation of adultRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
@@ -114,7 +116,7 @@
                 </label>
               </div>
               <div class="col-lg-3 col-12 form-group cstmDiv">
-                <label>Full Name *</label>
+                <label [ngClass]="{ 'required': modify}">Full Name</label>
                 <table>
                   <tr>
                     <td width="65">
@@ -137,7 +139,7 @@
               </div>
 
               <div class="col-lg-2 col-md-5 col-sm-5 form-group">
-                <label>Date of Birth *</label>
+                <label [ngClass]="{ 'required': modify}">Date of Birth</label>
                 <mat-form-field class="form-control">
                   <input matInput [matDatepicker]="picker" id="DateOfBirth{{i+1}}" readonly [disabled]="!modify"
                   [min]="angForm.controls.Members.value[i].membertype=='adult' ? meminDOBHB:childminDOB"
@@ -188,25 +190,25 @@
           <div class="innerdiv">
             <div class="row">
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Plan Name *</label>
+                <label>Plan Name</label>
                 <input type="text" formControlName="planName" class="form-control" [(ngModel)]="plan" disabled  />
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 col-6 form-group">
-                <label>Number of Adult *</label>
+                <label>Number of Adult</label>
                 <input type="text" formControlName="numberOfAdult" class="form-control" [(ngModel)]="adultCount" disabled/>
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 col-6 form-group">
-                <label>Number of Child *</label>
+                <label>Number of Child</label>
                 <input type="text" class="form-control" formControlName="numberOfChild" [(ngModel)]="childCount" disabled />
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                <label>Age of Eldest Member *</label>
+                <label>Age of Eldest Member</label>
                 <input type="text" class="form-control" formControlName="ageEldestMember" [(ngModel)]="highestAge" disabled />
               </div>
             </div>
             <div class="row">
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Policy Tenure *</label>
+                <label>Policy Tenure</label>
                 <select class="form-control custom-select"  formControlName="tenure" (change)="changeTenure(tenure)" [attr.disabled]="modify? null : ''" [(ngModel)]="tenure"  >
                   <option *ngFor="let tenure of tenureArray" value="{{tenure}}" >
                     {{tenure}} Year
@@ -214,7 +216,7 @@
                 </select>
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
-                <label>Sum Insured *</label>
+                <label>Sum Insured</label>
                 <select class="form-control custom-select" formControlName="sumInsured" (change)="changeSI(sumInsured)" [attr.disabled]="modify? null : ''"  [(ngModel)]="sumInsured"  >
                   <option *ngFor="let si of sumInsuredArray" >
                     {{si}}
@@ -222,7 +224,7 @@
                 </select>
               </div>
               <div class="col-lg-4 col-md-6 col-sm-6 form-group">
-                <label>Customer State * (Applicable for GST)</label>
+                <label>Customer State (Applicable for GST)</label>
                 <select class="form-control custom-select" formControlName="state"  [attr.disabled]="modify? null : ''" [(ngModel)]="state">
                   <option *ngFor="let st of stateArray"  value="{{st.GSTStateCode}}"  >
                     {{st.StateName  | titlecase}}
@@ -243,7 +245,7 @@
           <div class="innerdiv">
             <div class="row">
               <div class="col-lg-6 col-md-6 col-sm-6 form-group">
-                <label>Applicant Full Name *</label>
+                <label [ngClass]="{ 'required': modify}">Applicant Full Name</label>
                 <input type="text" class="form-control" [attr.disabled]="modify? null : ''" formControlName="applicantName" maxlength="50" placeholder="Enter Applicant Full Name" />
                 <span class="text-danger"
                                 *ngIf="(aaplicantFormControl.applicantName.touched || submitted) && aaplicantFormControl.applicantName.errors?.required">
@@ -251,7 +253,7 @@
                 </span>
               </div>
               <div class="form-group col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                <label>Mobile Number *</label>
+                <label [ngClass]="{ 'required': modify}">Mobile Number</label>
                 <input type="text" formControlName="mobileNumber" [attr.disabled]="modify? null : ''" class="form-control"
                   [ngClass]="{ 'is-invalid': submitted && aaplicantFormControl.mobileNumber.errors }"
                   pattern="[6-9]{1}[0-9]{9}" maxlength="10" minlength="10"
@@ -263,7 +265,7 @@
               </div>
 
               <div class="form-group col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
-                <label>Email ID *</label>
+                <label [ngClass]="{ 'required': modify}">Email ID</label>
                 <input type="text" formControlName="emailid" [attr.disabled]="modify? null : ''" class="form-control"
                   [ngClass]="{ 'is-invalid': submitted && aaplicantFormControl.emailid.errors }"
                   pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
@@ -274,7 +276,7 @@
               </div>
               <div class="col-lg-4 col-md-6 col-sm-6 form-group">
                 <label>Aadhar Card Number</label>
-                <input type="number" class="form-control" [attr.disabled]="modify? null : ''" formControlName="applicantAadhar" placeholder="Enter Aadhar Card Number" />
+                <input type="number" class="form-control" [attr.disabled]="modify? null : ''" formControlName="applicantAadhar" placeholder="" />
                 <div *ngIf="submitted && aaplicantFormControl.applicantAadhar.errors" class="text-danger">
                   <div *ngIf="aaplicantFormControl.applicantAadhar.errors.required">Aadhar card number is required</div>
                   <div *ngIf="aaplicantFormControl.applicantAadhar.touched && aaplicantFormControl.applicantAadhar.errors.pattern">Enter a valid Aadhar card number</div>
@@ -282,14 +284,14 @@
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
                 <label>Pancard Number</label>
-                <input type="text" class="form-control" [attr.disabled]="modify? null : ''" formControlName="applicantPan" placeholder="Enter Pancard Number" />
+                <input type="text" class="form-control" [attr.disabled]="modify? null : ''" formControlName="applicantPan" placeholder="" />
                 <div *ngIf="submitted && aaplicantFormControl.applicantPan.errors" class="text-danger">
                   <div *ngIf="aaplicantFormControl.applicantPan.errors.required">Pan card number is required</div>
                   <div *ngIf="aaplicantFormControl.applicantPan.touched && aaplicantFormControl.applicantPan.errors.pattern">Enter a valid Pancard Number</div>
                 </div>
               </div>
               <div class="col-lg-6 col-md-6 col-sm-6 form-group">
-                <label>Address line 1 *</label>
+                <label [ngClass]="{ 'required': modify}">Address line 1</label>
                 <input type="text" class="form-control"  [attr.disabled]="modify? null : ''" formControlName="applicantAddress1" placeholder="Enter Address" />
                 <span class="text-danger"
                                 *ngIf="(aaplicantFormControl.applicantAddress1.touched || submitted) && aaplicantFormControl.applicantAddress1.errors?.required">
@@ -297,7 +299,7 @@
                 </span>
               </div>
               <div class="col-lg-6 col-md-6 col-sm-6 form-group">
-                <label>Address line 2 *</label>
+                <label [ngClass]="{ 'required': modify}">Address line 2 </label>
                 <input type="text" class="form-control" [attr.disabled]="modify? null : ''" formControlName="applicantAddress2" placeholder="Enter Address" />
                 <span class="text-danger"
                                 *ngIf="(aaplicantFormControl.applicantAddress2.touched || submitted) && aaplicantFormControl.applicantAddress2.errors?.required">
@@ -305,7 +307,7 @@
                 </span>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                <label>Pincode *</label>
+                <label [ngClass]="{ 'required': modify}">Pincode</label>
                 <input type="number" class="form-control" [attr.disabled]="modify? null : ''"  placeholder="Enter Pincode" formControlName="applicantPinCode" (input)="getPincodeDetails($event)"
                 maxlength="6"/>
                 <span class="text-danger"
@@ -314,12 +316,12 @@
                 </span>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                <label>City *</label>
+                <label [ngClass]="{ 'required': modify}">City</label>
                 <input type="text" id="appCity" name="appCity" [attr.disabled]="modify? null : ''" class="form-control" formControlName="applicantCity"
                                   placeholder="Enter City" readonly />
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                <label>State *</label>
+                <label [ngClass]="{ 'required': modify}">State</label>
                 <input type="text" id="appState" name="appState" [attr.disabled]="modify? null : ''" class="form-control"
                 formControlName="applicantState" placeholder="Enter State" readonly />
               </div>
@@ -413,4 +415,6 @@
       </div>
     </div>
   </section>
+  
+ 
 

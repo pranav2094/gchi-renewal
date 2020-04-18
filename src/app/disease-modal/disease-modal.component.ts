@@ -1,4 +1,4 @@
-import { Component, OnInit,Inject } from '@angular/core';
+import { Component, OnInit,Inject, EventEmitter } from '@angular/core';
 import { MatDialogRef } from "@angular/material/dialog";
 import { Validators, FormGroup, FormArray, FormBuilder, FormControl } from '@angular/forms';
 import {CommonMethodsService} from 'src/app/services/common-methods.service' 
@@ -11,17 +11,21 @@ import {CommonMethodsService} from 'src/app/services/common-methods.service'
 })
 export class DiseaseModalComponent implements OnInit {
 
+  onAdd = new EventEmitter();
   diseaseForm: FormGroup;
   modify:boolean=false;
   diseasesList;
   constructor(public dialogRef: MatDialogRef<DiseaseModalComponent>, public cm:CommonMethodsService,public fb: FormBuilder) { 
-    this.modify = localStorage.modify;
+    
     this.diseaseForm = this.fb.group({
       checkArray: this.fb.array([], [Validators.required])
     })
   }
 
   ngOnInit() {
+      this.modify = localStorage.modify;
+      console.log(this.modify);
+      
       this.diseasesList = this.dialogRef._containerInstance._config.data;
       console.log(this.diseasesList);
   }
@@ -29,14 +33,14 @@ export class DiseaseModalComponent implements OnInit {
     this.dialogRef.close();
   }
   saveDisease() {
+
     if (this.diseaseForm.value != undefined) {
 
       this.cm.selctedDiseaseList = this.diseaseForm.value;
-      localStorage.setItem("PEDList",JSON.stringify(this.cm.selctedDiseaseList.checkArray));
+      this.onAdd.emit(JSON.stringify(this.cm.selctedDiseaseList.checkArray));
       if(this.cm.selctedDiseaseList.checkArray.length==0)
       {
-        alert("Please select Pre Existing Disease from list");
-         
+        alert("Please select Pre Existing Disease from list");     
       }
       else{
         this.dialogRef.close();
@@ -46,8 +50,9 @@ export class DiseaseModalComponent implements OnInit {
 
   cancelPED()
   {
+    this.onAdd.emit("no");
     this.dialogRef.close();
-    localStorage.isPED ="no";
+    
   }
   onCheckboxChange(e) {
     const checkArray: FormArray = this.diseaseForm.get('checkArray') as FormArray;

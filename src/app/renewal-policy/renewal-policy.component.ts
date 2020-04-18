@@ -8,7 +8,7 @@ import * as _ from 'underscore';
 import { Router } from '@angular/router';
 import { DiseaseModalComponent } from '../disease-modal/disease-modal.component';
 import { FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { localizedString } from '@angular/compiler/src/output/output_ast';
+
 
 
 declare var $: any;
@@ -54,13 +54,14 @@ export class RenewalPolicyComponent implements OnInit {
   policyDetails: any;
   isValidFormSubmitted = null;
   tenureArray: any = ['1', '2', '3', '4', '5'];
-  sumInsuredArray: any = ['500000', '700000', '1000000', '1500000', '2000000'];
+  sumInsuredArray: any =[];
   titleIDArray: any = ["Mr", "Mrs", "Ms"];
   tenure: any = "1";
   sumInsured: any = "500000";
   plan: any;
   stateArray: any = [];
   state: any;
+  policyPremium:any;
 
   constructor(public matDialog: MatDialog, private router: Router, public cm: CommonMethodsService, public cs: CommonServicesService, private fb: FormBuilder) {
     this.policyDetails = JSON.parse(localStorage.getItem('policyDetails'));
@@ -96,6 +97,7 @@ export class RenewalPolicyComponent implements OnInit {
     this.childminDOB = new Date(new Date().setFullYear(new Date().getFullYear() - 21));
     this.childmaxDOB = moment(this.childmaxDOB).format('YYYY-MM-DD');
     this.childminDOB = moment(this.childminDOB).format('YYYY-MM-DD');
+    localStorage.modify = this.modify;
   }
 
   fillForm(data) {
@@ -216,12 +218,13 @@ export class RenewalPolicyComponent implements OnInit {
   }
   renewalType(val: any) {
     this.modify = val.target.value == "modify" ? true : false;
+    console.log(this.modify);
     localStorage.modify = this.modify;
     if (!this.modify) {
       this.fillForm(this.customerDetails);
     }
   }
-  checkDateOfBirth() {
+  checkDateOfBirth(target) {
 
     let date_of_birth = moment(new Date(this.policyDetails.CustDob)).format('YYYY-MM-DD');
     console.log(date_of_birth);
@@ -236,9 +239,10 @@ export class RenewalPolicyComponent implements OnInit {
         this.showRenewal = true;
         this.RNFetch(this.policyDetails.PolicyNumber);
         this.fillForm(this.insureDetails);
+        this.scroll(target);
         this.tempFormValues = this.getFormValues();
         console.log("Highest age is ", this.getHighestAge());
-
+       
       } else {
         this.showRenewal = false;
         $('#doberror').html("Birth Date is mismatch");
@@ -382,11 +386,19 @@ export class RenewalPolicyComponent implements OnInit {
     if (msgData.length > 0) {
       msgData.forEach(element => {
         if (element['msg'] != '') {
-          Swal.fire('Oops...', element['msg'], 'error');
+          //.fire('Oops...', element['msg'], 'error');
+
+          this.snackbarMessage=element['msg'];
+          this.cm.getSnackbarMessage(this.snackbarMessage);
           return false;
         }
       });
     }
+  }
+  scroll(el:HTMLElement){
+    setTimeout(() => {
+      el.scrollIntoView({behavior:"smooth"});
+    }, 1000);
   }
   checkData() {
     let selfCount = 0;
@@ -463,13 +475,19 @@ export class RenewalPolicyComponent implements OnInit {
     // if(res.StatusCode ==1)
     // {
     //   policyData = res;
+    //   this.applicantDetails = [
+    //     { "applicantName": policyData.NameOfApplicant, "mobileNumber": policyData.Mobile, "emailid": policyData.Email, "aadharNo": policyData.AadhaarNumber, "panNo": policyData.PANNumber, "address1": policyData.AddressLine1, "address2": policyData.AddressLine2, "pincode":policyData.Pincode, "city": policyData.CityName, "state":policyData.StateName}
+    //   ]
     //   console.log(policyData);
+    //   this.sumInsuredArray = policyData.hospitalSIList;
+    //   this.policyPremium = policyData.TotalPremium1Year;
+
 
 
 
     // }
     // else{
-    //   // Swal.fire('Oops...', "Something went wrong !!!", 'error');
+    //   // Swal.fire('', "Something went wrong !!!", 'error');
     //   // return false;
 
     // }
@@ -573,7 +591,13 @@ export class RenewalPolicyComponent implements OnInit {
     dialogConfig.width = "600px";
     dialogConfig.data = this.questionList;
     const modalDialog = this.matDialog.open(DiseaseModalComponent, dialogConfig);
-    console.log(dialogConfig);
+    const sub = modalDialog.componentInstance.onAdd.subscribe((data) => {
+      // do something
+      console.log(data);  
+    });
+    modalDialog.afterClosed().subscribe(() => {
+      sub.unsubscribe();
+    });
   }
 
   onSubmit() {
