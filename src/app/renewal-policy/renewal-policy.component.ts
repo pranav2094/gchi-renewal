@@ -197,11 +197,11 @@ export class RenewalPolicyComponent implements OnInit {
   }
 
   createMembers(data) {
-    const membertype = data["KidAdultType"];
+    const membertype = data["membertype"];
     const relationship = data["relationship"] || '';
     const insuredname = data["FullName"] || '';
     const insureddob = data["DateofBirth"] || '';
-    const ped = data["PreExistingDisease"] || '';
+    const ped = data["PreExistingDisease"] || 'None';
     const title = data['Title'] || ''
     let form = this.fb.group({
       title: [title, Validators.required],
@@ -255,6 +255,8 @@ export class RenewalPolicyComponent implements OnInit {
     this.modify = val.target.value == "modify" ? true : false;
     console.log(this.modify);
     localStorage.modify = this.modify;
+    console.log(this.customerDetails);
+
     if (!this.modify) {
       this.fillForm(this.customerDetails);
     }
@@ -316,8 +318,11 @@ export class RenewalPolicyComponent implements OnInit {
     let defaultData = adultChildCount['childCount'] >= 3 ? 'Adult' : adultChildCount['adultCount'] >= 2 ? 'Kid' : 'Adult';
     //  adultChildCount['childCount'] > 3 ? 'Adult': 'Kid';   
     this.defaultData = { membertype: defaultData };
+    console.log(this.defaultData);
+    
     (this.angForm.controls['Members'] as FormArray).push(this.createMembers(this.defaultData));
     this.checkForm();
+  
     console.log("Higest age is", this.highestAge);
     console.log("Adult Kid count is", this.adultChildCount());
   }
@@ -336,14 +341,27 @@ export class RenewalPolicyComponent implements OnInit {
   calculateQuote() {
     let membersAray = [];
     this.isValidFormSubmitted = false;
-    console.log(this.angForm);
     
     if (this.angForm.invalid) {
       return;
     }
     this.checkForm();
     this.isValidFormSubmitted = true;
+    
     this.insureDetails = JSON.parse(localStorage.getItem('insuredDetails'));
+
+    this.Members.value.forEach((element, i) => {
+      console.log(element);
+      
+      this.insureDetails[i].PreExistingDisease = element.ped;
+      this.insureDetails[i].FullName = element.insuredname;
+      this.insureDetails[i].DateofBirth = moment(element.insureddob).format('DD-mm-YYYY');
+      this.insureDetails[i].KidAdultType = element.membertype;
+      this.insureDetails[i].Title = element.title;
+      this.insureDetails[i].relationship = element.relationship;
+    });
+    console.log("MOdified",this.insureDetails);
+    
     this.insureDetails.forEach(function (element) {
       let obj = {
         MemberType: element.membertype,
@@ -440,6 +458,8 @@ export class RenewalPolicyComponent implements OnInit {
     data.forEach((element, i) => {
 
       rel_data.push(this.checkRelation(element, i));
+      console.log(rel_data);
+      
       selfCount = element["relationship"] == 'SELF' ? element["membertype"] == "Adult" ? (selfCount += 1) : (selfChildCount += 1) : selfCount;
       childCount = element["membertype"] == "Kid" ? (childCount += 1) : childCount;
       adultCount = element["membertype"] == "Adult" ? (adultCount += 1) : adultCount;
@@ -464,12 +484,12 @@ export class RenewalPolicyComponent implements OnInit {
 
   checkthis(eve: any, i) {
     this.checkForm();
+    this.tempFormValues = this.getFormValues();
     // this.tempFormValues.forEach( e=> {
     if (this.tempFormValues[i]['membertype'] != eve.target.value) {
       this.angForm.controls.Members.value[i]["membertype"] = this.tempFormValues[i]["membertype"];
-      // this.CountryResponse.country = selectedCountry;
       (<FormGroup>this.angForm.controls.Members)
-        .setValue(this.tempFormValues, { onlySelf: true });
+        .setValue(this.tempFormValues, { onlySelf: true});
     }
     console.log("option click works")
   }
@@ -508,7 +528,7 @@ export class RenewalPolicyComponent implements OnInit {
           this.applicantDetails ={ "applicantName": policyData.NameOfApplicant, "mobileNumber": policyData.Mobile, "emailid": emailid, "applicantAadhar": policyData.AadhaarNumber, "applicantPan": policyData.PANNumber, "applicantAddress1": policyData.AddressLine1, "applicantAddress2": policyData.AddressLine2, "applicantPinCode":policyData.Pincode, "applicantCity": policyData.CityName, "applicantState":policyData.StateName}
           policyData.InsuredDetails.forEach(element => {
             let obj = {
-              KidAdultType: element.KidAdultType,
+              membertype: element.KidAdultType,
               Title: element.Title,
               FullName: element.FullName,
               RelationshipID: element.RelationShipID,
@@ -535,11 +555,12 @@ export class RenewalPolicyComponent implements OnInit {
           this.tenure = policyData.TenureYrs;
           this.sumInsured = policyData.SumInsured;
           this.sumInsuredArray = policyData.hospitalSIList;
+       
           this.fillForm(this.insureDetails);
           this.fillApplicantForm(this.applicantDetails);
  
-          this.tempFormValues = this.getFormValues();
-          this.customerDetails = JSON.parse(localStorage.getItem('insuredDetails'));
+          
+          this.customerDetails = this.insureDetails;
           this.getHighestAge();
           this.sumInsuredArray = policyData.hospitalSIList;
           this.policyPremium = policyData.TotalPremium1Year;
@@ -692,17 +713,26 @@ export class RenewalPolicyComponent implements OnInit {
     const sub = modalDialog.componentInstance.onAdd.subscribe((data) => {
       // do something
       console.log(data);
-      this.pedData.push({ped_index:i, disease_list: data});
-      console.log(this.pedData);
-      let isured_Data = JSON.parse(localStorage.getItem("insuredDetails"));
-      let data1 = this.getFormValues();
-      this.pedData.forEach((element, i) => {
-        // if(this.pedData[i]["ped_index"]==i){
-        isured_Data[element["ped_index"]].pedData = element["disease_list"];
-        console.log(isured_Data);
-        localStorage.setItem("insuredDetails",JSON.stringify(isured_Data));
-        // }
-      });
+      if(data!='no')
+      {
+        this.pedData.push({ped_index:i, disease_list: data});
+        console.log(this.pedData);
+        let isured_Data = JSON.parse(localStorage.getItem("insuredDetails"));
+        let data1 = this.getFormValues();
+        this.pedData.forEach((element, i) => {
+          // if(this.pedData[i]["ped_index"]==i){
+          isured_Data[element["ped_index"]].pedData = element["disease_list"];
+          console.log(isured_Data);
+          localStorage.setItem("insuredDetails",JSON.stringify(isured_Data));
+          // }
+        });
+        this.Members.at(i).patchValue({ 'insureddiseas': 'Yes'});
+
+      }
+      else{
+        this.Members.at(i).patchValue({ 'insureddiseas': 'None'});
+      }
+     
     });
     modalDialog.afterClosed().subscribe(() => {
       sub.unsubscribe();

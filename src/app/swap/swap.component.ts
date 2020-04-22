@@ -41,8 +41,6 @@ export class SwapComponent implements OnInit {
     this.cm.showSpinner(false);
     if(res.StatusCode ==1)
     { 
-    
-      console.log(policyData);
       localStorage.basicAuth = res.BasicAuth;
       policyData={
         'PolicyNumber': res.PolicyNumber,
