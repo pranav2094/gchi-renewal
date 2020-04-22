@@ -23,11 +23,12 @@ export class DiseaseModalComponent implements OnInit {
   }
 
   ngOnInit() {
-      this.modify = localStorage.modify;
-      console.log(this.modify);
-      
       this.diseasesList = this.dialogRef._containerInstance._config.data;
-      console.log(this.diseasesList);
+      if(localStorage.modify==true)
+      {
+        this.modify=true;
+      }
+      console.log(localStorage.modify,this.modify);
   }
   close() {
     this.dialogRef.close();
@@ -37,12 +38,13 @@ export class DiseaseModalComponent implements OnInit {
     if (this.diseaseForm.value != undefined) {
 
       this.cm.selctedDiseaseList = this.diseaseForm.value;
-      this.onAdd.emit(JSON.stringify(this.cm.selctedDiseaseList.checkArray));
+      
       if(this.cm.selctedDiseaseList.checkArray.length==0)
       {
         alert("Please select Pre Existing Disease from list");     
       }
       else{
+        this.onAdd.emit(JSON.stringify(this.cm.selctedDiseaseList.checkArray));
         this.dialogRef.close();
       }
     }

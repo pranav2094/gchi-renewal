@@ -2,7 +2,7 @@
     <span id="modalHeader" class="modal_dis_header">
       <p id="modal-title" class="text-center">Please select the Pre-existing Diseases</p>
     </span>
-    <form [formGroup]="diseaseForm" (submit)="saveDisease()">
+    <form [formGroup]="diseaseForm" >
       <section id="modal-body" class="modalBody">
         <table>
           <tr *ngFor="let dis of diseasesList">
@@ -20,7 +20,7 @@
         </table>
       </section>
       <div class="modal-foot col-12 text-center" style="margin-bottom: 10px;">
-        <button type="submit"   [attr.disabled]="modify? null : ''"  class="cstmbtn1">Proceed</button>
+        <button type="button" (click)="saveDisease()"  class="cstmbtn1">Proceed</button>
         <button type="button" (click)="cancelPED()" class="prevBtn cstmbtn2" style="margin-left: 5px;">Cancel</button>
         
       </div>

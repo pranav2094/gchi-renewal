@@ -41,9 +41,14 @@ export class SwapComponent implements OnInit {
     this.cm.showSpinner(false);
     if(res.StatusCode ==1)
     { 
-      policyData = res;
+    
       console.log(policyData);
       localStorage.basicAuth = res.BasicAuth;
+      policyData={
+        'PolicyNumber': res.PolicyNumber,
+        'CustDob':res.CustDob,
+        'DealID':res.DealID
+      }
       localStorage.setItem("policyDetails",JSON.stringify(policyData))
       this.router.navigateByUrl('/renewal-policy');
     }

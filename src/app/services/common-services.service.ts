@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
+import { catchError, tap, map, retry, timeout } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -44,8 +45,9 @@ export class CommonServicesService {
   }
   postAPICallWithAuthToken(endPoint, request): Observable<any> {
     this.jsonhttpOptions = this.checkHttpStatus(localStorage.getItem("basicAuth"));
-    return this.http.post(this.baseURL + endPoint,request ,this.jsonhttpOptions);
+    return this.http.post(this.baseURL + endPoint,request ,this.jsonhttpOptions).pipe(timeout(240000));
   }
+ 
 
   pdfDownload(type: any, policID: any) {
     return (

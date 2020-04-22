@@ -44,10 +44,10 @@
                 <table>
                   <tr>
                     <td>
-                      Premium for 1 Year
+                      Premium for {{tenure}} Year
                     </td>
                     <td class="text-right">
-                      <span>9271</span>
+                      <span>{{policyPremium}}</span>
                     </td>
                   </tr>
                 </table>
@@ -94,17 +94,17 @@
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
                 <label >Insured Category</label>
                   <select class="form-control custom-select" formControlName="membertype"  [attr.disabled]="modify? null : ''" (change)="checkthis($event, i)">
-                    <option  value="{{type['type']}}" *ngFor="let type of memberType" [attr.selected]="type['type']==angForm.controls.Members.value[i].membertype ? '': null">{{type['type'] | titlecase}}</option>
+                    <option  value="{{type['type']}}" *ngFor="let type of memberType" [attr.selected]="type['type']==angForm.controls.Members.value[i].membertype ? '': null">{{type['value'] | titlecase}}</option>
                   </select>
               </div>
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
                 <label [ngClass]="{ 'required': modify}">Relationship</label>
-                <select *ngIf="angForm.controls.Members.value[i].membertype=='adult'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
+                <select *ngIf="angForm.controls.Members.value[i].membertype=='Adult'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
                   <option  value="" disabled selected>Select Relationship</option>
                   <option  value={{relation.RelationshipName}} *ngFor="let relation of adultRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
                     {{relation.RelationshipName | titlecase}}</option>
                 </select>
-                <select *ngIf="angForm.controls.Members.value[i].membertype=='child'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
+                <select *ngIf="angForm.controls.Members.value[i].membertype=='Kid'" formControlName="relationship" [attr.disabled]="modify? null : ''" (change)="checkForm()" class="form-control"  >
                   <option  value="" disabled selected>Select Relationship</option>
                   <option  value={{relation.RelationshipName}} *ngFor="let relation of childRelationArray" [attr.selected]="relation==angForm.controls.Members.value[i].relationship ? '': null">
                     {{relation.RelationshipName | titlecase}}</option>
@@ -142,8 +142,8 @@
                 <label [ngClass]="{ 'required': modify}">Date of Birth</label>
                 <mat-form-field class="form-control">
                   <input matInput [matDatepicker]="picker" id="DateOfBirth{{i+1}}" readonly [disabled]="!modify"
-                  [min]="angForm.controls.Members.value[i].membertype=='adult' ? meminDOBHB:childminDOB"
-                  [max]="angForm.controls.Members.value[i].membertype=='adult' ? memmaxDOBHB : childmaxDOB" 
+                  [min]="angForm.controls.Members.value[i].membertype=='Adult' ? meminDOBHB:childminDOB"
+                  [max]="angForm.controls.Members.value[i].membertype=='Adult' ? memmaxDOBHB : childmaxDOB" 
                   (click)="picker.open()" (dateChange)="getInsuredDateOfBirth($event,i)" formControlName="insureddob">
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
@@ -161,12 +161,12 @@
                   <tr>
                     <td>
                       <input type="radio" id="ped_{{(i*i)+(i+1)}}" formControlName="ped"
-                        class="custom-control-input" value="yes" [attr.disabled]="modify? null : ''">
+                        class="custom-control-input" value="Yes" [attr.disabled]="modify? null : ''">
                     <label class="custom-control-label" for="ped_{{(i*i)+(i+1)}}">Yes</label>
                     </td>
                     <td>
                     <input type="radio" id="ped_{{(i*i)+(i+2)}}" formControlName="ped"
-                        class="custom-control-input" value="no" [attr.disabled]="modify? null : ''">
+                        class="custom-control-input" value="None" [attr.disabled]="modify? null : ''">
                     <label class="custom-control-label" for="ped_{{(i*i)+(i+2)}}">No</label>
                     </td>
                   </tr>
@@ -174,7 +174,7 @@
               </div>
               <div class="col-lg-1 col-md-2 col-sm-2  col-5 p-0 form-group">
                 <label class="invisible">btn</label>
-                <a (click)="showPED($event,i)" class="cursorPointer viewPed"  *ngIf="angForm.controls.Members.value[i].ped=='yes'">View PED</a>
+                <a (click)="showPED($event,i)" class="cursorPointer viewPed"  *ngIf="angForm.controls.Members.value[i].ped=='Yes'">View PED</a>
               </div>
             </div>
           </div>
@@ -189,7 +189,7 @@
           <h4>Plan Details</h4>
           <div class="innerdiv">
             <div class="row">
-              <div class="col-lg-2 col-md-6 col-sm-6 form-group">
+              <div class="col-lg-4 col-md-6 col-sm-6 form-group">
                 <label>Plan Name</label>
                 <input type="text" formControlName="planName" class="form-control" [(ngModel)]="plan" disabled  />
               </div>
@@ -218,8 +218,8 @@
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
                 <label>Sum Insured</label>
                 <select class="form-control custom-select" formControlName="sumInsured" (change)="changeSI(sumInsured)" [attr.disabled]="modify? null : ''"  [(ngModel)]="sumInsured"  >
-                  <option *ngFor="let si of sumInsuredArray" >
-                    {{si}}
+                  <option *ngFor="let si of sumInsuredArray" value="{{si.SIValue}}" >
+                    {{si.SIValue}}
                   </option>
                 </select>
               </div>
@@ -264,11 +264,11 @@
                   </div>
               </div>
 
-              <div class="form-group col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+              <div class="form-group col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                 <label [ngClass]="{ 'required': modify}">Email ID</label>
                 <input type="text" formControlName="emailid" [attr.disabled]="modify? null : ''" class="form-control"
                   [ngClass]="{ 'is-invalid': submitted && aaplicantFormControl.emailid.errors }"
-                  pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
+                  pattern="^[a-z0-9._%+-]+@[Aa-z0-9.-]+\.[a-z]{2,4}$" />
                   <div *ngIf="submitted && aaplicantFormControl.emailid.errors" class="text-danger">
                     <div *ngIf="aaplicantFormControl.emailid.errors.required">Email ID is required</div>
                     <div *ngIf="aaplicantFormControl.emailid.touched && aaplicantFormControl.emailid.errors.pattern">Enter a valid Email ID</div>

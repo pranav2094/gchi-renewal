@@ -40,7 +40,7 @@ export class RenewalPolicyComponent implements OnInit {
   isAutoRenewal: boolean = false;
   angForm: FormGroup;
   customerList: FormArray;
-  memberType = [{ type: 'adult', enabled: true }, { type: 'child', enabled: true }];
+  memberType = [{ type: 'Adult', enabled: true , value :'Adult'}, { type: 'Kid', enabled: true, value:'Child'}];
   modify: boolean = false;
   defaultData = {};
   dateOfBirthArray = [];
@@ -62,7 +62,9 @@ export class RenewalPolicyComponent implements OnInit {
   stateArray: any = [];
   state: any;
   policyPremium:any;
-
+  nomineeDetaiils:any;
+  appointeeDetails:any;
+  pedData = [];
   constructor(public matDialog: MatDialog, private router: Router, public cm: CommonMethodsService, public cs: CommonServicesService, private fb: FormBuilder) {
     this.policyDetails = JSON.parse(localStorage.getItem('policyDetails'));
 
@@ -98,6 +100,31 @@ export class RenewalPolicyComponent implements OnInit {
     this.childmaxDOB = moment(this.childmaxDOB).format('YYYY-MM-DD');
     this.childminDOB = moment(this.childminDOB).format('YYYY-MM-DD');
     localStorage.modify = this.modify;
+    this.applicantDetails = JSON.parse(localStorage.getItem("applicantDetails")) || '';
+    this.fillApplicantForm(this.applicantDetails);
+    const applicantAccountName = this.applicantForm.get('applicantAccountName');
+    const applicantAccountNo = this.applicantForm.get('applicantAccountNo');
+    const applicantIFSCCode = this.applicantForm.get('applicantIFSCCode');
+    this.applicantForm.get('applicantAutoRenewal').valueChanges.subscribe(
+      (valid: boolean) => {
+        this.isAutoRenewal = valid;
+        console.log(this.isAutoRenewal);
+        
+        if (valid) {
+          applicantAccountName.setValidators([Validators.required]);
+          applicantAccountNo.setValidators([Validators.required, Validators.pattern(/^\d{9,18}$/)]);
+          applicantIFSCCode.setValidators([Validators.required]);
+        }
+        else {
+          applicantAccountName.clearValidators();
+          applicantAccountNo.clearValidators();
+          applicantIFSCCode.clearValidators();
+        }
+        applicantAccountName.updateValueAndValidity();
+        applicantAccountNo.updateValueAndValidity();
+        applicantIFSCCode.updateValueAndValidity();
+      });
+
   }
 
   fillForm(data) {
@@ -105,36 +132,47 @@ export class RenewalPolicyComponent implements OnInit {
     this.customerList.clear();
     if (data) {
       data.forEach(details => {
-        console.log(details);
         this.customerList.push(this.createMembers(details));
       });
     } else {
       this.customerList.push(this.createMembers(this.defaultData));
     }
     this.adultChildCount();
-    this.applicantDetails = JSON.parse(localStorage.getItem('applicantDetails'));
-    this.applicantDetails.forEach(det => {
-      this.applicantForm = this.fb.group({
-        applicantName: [det.applicantName || '', Validators.required],
-        // applicantAadhar: ['', [Validators.required,Validators.pattern(/^\d{4}\d{4}\d{4}$/)]],
-        // applicantPan: ['', [Validators.required,Validators.pattern(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/)]],
-        mobileNumber: [det.mobileNumber || '', [Validators.required]],
-        emailid: [det.emailid || '', [Validators.required]],
-        applicantAadhar: [det.aadharNo || ''],
-        applicantPan: [det.panNo || ''],
-        applicantAddress1: [det.address1 || '', [Validators.required]],
-        applicantAddress2: [det.address2 || '', [Validators.required]],
-        applicantPinCode: [det.pincode || '', [Validators.required]],
-        applicantState: [det.city || '', [Validators.required]],
-        applicantCity: [det.state || '', [Validators.required]],
-        applicantWhatsappConsent: [''],
-        applicantPolicyKit: [''],
-        applicantAutoRenewal: [''],
-        applicantAccountName: [''],
-        applicantAccountNo: [''],
-        applicantIFSCCode: ['']
-      });
+ 
+  }
+  fillApplicantForm(applicantDetails)
+  {
+    const applicantName = applicantDetails.applicantName || '';
+    const mobileNumber = applicantDetails.mobileNumber  || '';
+    const emailid = applicantDetails.emailid  || '';
+    const applicantAadhar = applicantDetails.applicantAadhar || '';
+    const applicantPan = applicantDetails.applicantPan  || '';
+    const applicantAddress1 = applicantDetails.applicantAddress1  || '';
+    const applicantAddress2 = applicantDetails.applicantAddress2  || '';
+    const applicantPinCode = applicantDetails.applicantPinCode  || '';
+    const applicantState = applicantDetails.applicantState  || '';
+    const applicantCity = applicantDetails.applicantCity  || '';
+    
 
+    this.applicantForm = this.fb.group({
+      applicantName: [applicantName , Validators.required],
+      // applicantAadhar: ['', [Validators.required,Validators.pattern(/^\d{4}\d{4}\d{4}$/)]],
+      // applicantPan: ['', [Validators.required,Validators.pattern(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/)]],
+      mobileNumber: [mobileNumber, [Validators.required]],
+      emailid: [emailid , [Validators.required]],
+      applicantAadhar: [applicantAadhar ],
+      applicantPan: [applicantPan],
+      applicantAddress1: [applicantAddress1, [Validators.required]],
+      applicantAddress2: [applicantAddress2, [Validators.required]],
+      applicantPinCode: [applicantPinCode, [Validators.required]],
+      applicantState: [applicantState, [Validators.required]],
+      applicantCity: [applicantCity, [Validators.required]],
+      applicantWhatsappConsent: [''],
+      applicantPolicyKit: [''],
+      applicantAutoRenewal: [''],
+      applicantAccountName: [''],
+      applicantAccountNo: [''],
+      applicantIFSCCode: ['']
     });
     const applicantAccountName = this.applicantForm.get('applicantAccountName');
     const applicantAccountNo = this.applicantForm.get('applicantAccountNo');
@@ -156,21 +194,20 @@ export class RenewalPolicyComponent implements OnInit {
         applicantAccountNo.updateValueAndValidity();
         applicantIFSCCode.updateValueAndValidity();
       });
-
-
   }
+
   createMembers(data) {
-    const membertype = data["membertype"];
+    const membertype = data["KidAdultType"];
     const relationship = data["relationship"] || '';
-    const insuredname = data["insuredname"] || '';
-    const insureddob = data["insureddob"] || '';
-    const ped = data["ped"] || 'no';
-    const title = data['title'] || ''
+    const insuredname = data["FullName"] || '';
+    const insureddob = data["DateofBirth"] || '';
+    const ped = data["PreExistingDisease"] || '';
+    const title = data['Title'] || ''
     let form = this.fb.group({
       title: [title, Validators.required],
       insuredname: [insuredname, Validators.required],
       relationship: [relationship, Validators.required],
-      insureddob: [insureddob, Validators.required],
+      insureddob: [new Date(insureddob), Validators.required],
       membertype: [membertype],
       ped: [ped]
     });
@@ -205,8 +242,6 @@ export class RenewalPolicyComponent implements OnInit {
     this.dateOfBirthArray = [];
     dobArray.forEach((d, i) => {
       dob = moment(d["DateOfBirth"]).format('YYYY-MM-DD');
-      console.log(dob);
-
       var ageDifMs = Date.now() - new Date(dob).getTime();
       var ageDate = new Date(ageDifMs); // miliseconds from epoch
       Math.abs(ageDate.getUTCFullYear() - 1970);
@@ -238,10 +273,7 @@ export class RenewalPolicyComponent implements OnInit {
       if (same) {
         this.showRenewal = true;
         this.RNFetch(this.policyDetails.PolicyNumber);
-        this.fillForm(this.insureDetails);
         this.scroll(target);
-        this.tempFormValues = this.getFormValues();
-        console.log("Highest age is ", this.getHighestAge());
        
       } else {
         this.showRenewal = false;
@@ -276,18 +308,18 @@ export class RenewalPolicyComponent implements OnInit {
     });
     this.checkForm();
     console.log("Higest age is", this.highestAge);
-    console.log("Adult child count is", this.adultChildCount());
+    console.log("Adult Kid count is", this.adultChildCount());
   }
   addInsured() {
     let adultChildCount = this.adultChildCount();
-    // let defaultData = adultChildCount['adultCount'] >= 2 ? 'child' : adultChildCount['childCount'] >= 3 ? 'adult' : 'child' ;
-    let defaultData = adultChildCount['childCount'] >= 3 ? 'adult' : adultChildCount['adultCount'] >= 2 ? 'child' : 'adult';
-    //  adultChildCount['childCount'] > 3 ? 'adult': 'child';   
+    // let defaultData = adultChildCount['adultCount'] >= 2 ? 'Kid' : adultChildCount['childCount'] >= 3 ? 'Adult' : 'Kid' ;
+    let defaultData = adultChildCount['childCount'] >= 3 ? 'Adult' : adultChildCount['adultCount'] >= 2 ? 'Kid' : 'Adult';
+    //  adultChildCount['childCount'] > 3 ? 'Adult': 'Kid';   
     this.defaultData = { membertype: defaultData };
     (this.angForm.controls['Members'] as FormArray).push(this.createMembers(this.defaultData));
     this.checkForm();
     console.log("Higest age is", this.highestAge);
-    console.log("Adult child count is", this.adultChildCount());
+    console.log("Adult Kid count is", this.adultChildCount());
   }
   getFormValues() {
     return this.angForm.controls.Members.value;
@@ -296,7 +328,7 @@ export class RenewalPolicyComponent implements OnInit {
     this.adultCount = 0;
     this.childCount = 0;
     this.getFormValues().forEach(element => {
-      element.membertype == 'adult' ? (this.adultCount += 1) : (this.childCount += 1);
+      element.membertype == 'Adult' ? (this.adultCount += 1) : (this.childCount += 1);
     });
     return { adultCount: this.adultCount, childCount: this.childCount };
   }
@@ -304,17 +336,14 @@ export class RenewalPolicyComponent implements OnInit {
   calculateQuote() {
     let membersAray = [];
     this.isValidFormSubmitted = false;
+    console.log(this.angForm);
+    
     if (this.angForm.invalid) {
       return;
     }
     this.checkForm();
     this.isValidFormSubmitted = true;
-    console.log("Plan detaila form", this.planDetailsForm.value);
-    localStorage.setItem('insuredDetails', JSON.stringify(this.getFormValues()));
-
     this.insureDetails = JSON.parse(localStorage.getItem('insuredDetails'));
-    console.log("InsuredDetails", this.insureDetails);
-
     this.insureDetails.forEach(function (element) {
       let obj = {
         MemberType: element.membertype,
@@ -329,8 +358,6 @@ export class RenewalPolicyComponent implements OnInit {
         OtherDisease: "",
         Ailments: ""
       }
-      console.log(obj);
-
       membersAray.push(obj);
     }.bind(this));
     // console.log(membersAray);
@@ -398,7 +425,7 @@ export class RenewalPolicyComponent implements OnInit {
   scroll(el:HTMLElement){
     setTimeout(() => {
       el.scrollIntoView({behavior:"smooth"});
-    }, 1000);
+    },500);
   }
   checkData() {
     let selfCount = 0;
@@ -408,25 +435,34 @@ export class RenewalPolicyComponent implements OnInit {
     let data = this.getFormValues();
     let msg = [];
     let text;
-
+    let rel_data = []
+    let isured_Data = JSON.parse(localStorage.getItem("insuredDetails"));
     data.forEach((element, i) => {
 
-
-      selfCount = element["relationship"] == 'SELF' ? element["membertype"] == "adult" ? (selfCount += 1) : (selfChildCount += 1) : selfCount;
-      childCount = element["membertype"] == "child" ? (childCount += 1) : childCount;
-      adultCount = element["membertype"] == "adult" ? (adultCount += 1) : adultCount;
+      rel_data.push(this.checkRelation(element, i));
+      selfCount = element["relationship"] == 'SELF' ? element["membertype"] == "Adult" ? (selfCount += 1) : (selfChildCount += 1) : selfCount;
+      childCount = element["membertype"] == "Kid" ? (childCount += 1) : childCount;
+      adultCount = element["membertype"] == "Adult" ? (adultCount += 1) : adultCount;
     });
-    text = selfCount > 1 ? "you can add only one self realation" : selfCount == 0 ? "Please select atleast one self relation with adult member" : '';
+    text = selfCount > 1 ? "you can add only one self realation" : selfCount == 0 ? "Please select atleast one self relation with Adult member" : '';
     msg.push({ msg: text });
     childCount > 3 ? msg.push({ msg: "You can add maximum 3 children" }) : msg.push({ msg: '' });
     adultCount > 2 ? msg.push({ msg: "You can add maximum 2 adults" }) : msg.push({ msg: '' });
-    selfChildCount > 0 ? msg.push({ msg: "Please select self reltion with an adult" }) : msg.push({ msg: '' });
+    selfChildCount > 0 ? msg.push({ msg: "Please select self reltion with an Adult" }) : msg.push({ msg: '' });
     this.showAddInsured = data.length >= 5 ? false : true;
     this.msgFunction(msg);
   }
+  checkRelation(elem, i){
+    let data;
+    this.adultRelationArray.forEach(e =>{
+      if(elem["relationship"]==e["RelationshipName"]){
+        data = {relation_name:e["RelationshipName"], relation_id:e["RelationshipID"]}
+      }
+    });
+    return data;
+  }
 
   checkthis(eve: any, i) {
-    console.log(this.tempFormValues);
     this.checkForm();
     // this.tempFormValues.forEach( e=> {
     if (this.tempFormValues[i]['membertype'] != eve.target.value) {
@@ -442,56 +478,112 @@ export class RenewalPolicyComponent implements OnInit {
     this.checkData();
   }
   RNFetch(PolicyNo: any) {
+    let membersAray = [];
     let policyData;
     let payload = {
       "UserType": "CUSTOMER",
       "PolicyNo": PolicyNo,
       "IsGchiRenewal": true
     };
-
-    this.insureDetails = [{ "title": "1", "insuredname": "Yogendra Desai", "relationship": "FATHER", "insureddob": "1976-06-07T18:30:00.000Z", "insureddiseas": "no", "insuredgender": "Male", "membertype": "adult", "ped": "yes" }
-      , { "title": "2", "insuredname": "Pooja Desai", "relationship": "SPOUSE", "insureddob": "1978-06-13T18:30:00.000Z", "insureddiseas": "no", "insuredgender": "Female", "membertype": "adult", "ped": "no" }
-      , { "title": "1", "insuredname": "Amruta Desai", "relationship": "DAUGHTER", "insureddob": "2006-10-10T18:30:00.000Z", "insureddiseas": "no", "insuredgender": "Male", "membertype": "child", "ped": "yes" }
-      , { "title": "3", "insuredname": "Avinash Desai", "relationship": "SON", "insureddob": "2018-10-11T18:30:00.000Z", "insureddiseas": "no", "insuredgender": "Female", "membertype": "child", "ped": "no" }]
-
-    this.applicantDetails = [
-      { "applicantName": "Yogendra Desai", "mobileNumber": "9821804575", "emailid": "yog123@gmail.com", "aadharNo": "", "panNo": "", "address1": "Gandhi Nagar", "address2": "Vikhroli", "pincode": "400706", "city": "Mumbai", "state": "Maharashtra" }
-    ]
-
-
-    this.plan = "Health Plan";
-    this.state = "27";
-    localStorage.setItem('insuredDetails', JSON.stringify(this.insureDetails));
-    localStorage.setItem('applicantDetails', JSON.stringify(this.applicantDetails));
-    this.customerDetails = JSON.parse(localStorage.getItem('insuredDetails'));
-    console.log(payload);
-    this.getHighestAge();
+    let payLoadStr = JSON.stringify(payload);
 
     // this.spinnerTxt = "Please wait... We are fetching policy details."
     // this.cm.showSpinner(true,this.spinnerTxt);
-    // let payLoadStr = JSON.stringify(payload);
+   
     // this.cs.postAPICallWithAuthToken('api/renewal/HealthPolicyRenewalRN', payLoadStr).subscribe((res) => {
     // this.cm.showSpinner(false);
-    // if(res.StatusCode ==1)
-    // {
-    //   policyData = res;
-    //   this.applicantDetails = [
-    //     { "applicantName": policyData.NameOfApplicant, "mobileNumber": policyData.Mobile, "emailid": policyData.Email, "aadharNo": policyData.AadhaarNumber, "panNo": policyData.PANNumber, "address1": policyData.AddressLine1, "address2": policyData.AddressLine2, "pincode":policyData.Pincode, "city": policyData.CityName, "state":policyData.StateName}
-    //   ]
-    //   console.log(policyData);
-    //   this.sumInsuredArray = policyData.hospitalSIList;
-    //   this.policyPremium = policyData.TotalPremium1Year;
+    fetch("assets/js/response.json", { method: "GET" })
+    .then(data => data.json())
+    .then(res => {
+      console.log(res);
+      
+      if(res.StatusCode ==1)
+      {
+        for (var i=0;i<res.HealthList.length;i++)
+        {
+        
+          policyData = res.HealthList[i];
+          let emailid =  policyData.Email.toLowerCase();
+          console.log(emailid);
+          this.applicantDetails ={ "applicantName": policyData.NameOfApplicant, "mobileNumber": policyData.Mobile, "emailid": emailid, "applicantAadhar": policyData.AadhaarNumber, "applicantPan": policyData.PANNumber, "applicantAddress1": policyData.AddressLine1, "applicantAddress2": policyData.AddressLine2, "applicantPinCode":policyData.Pincode, "applicantCity": policyData.CityName, "applicantState":policyData.StateName}
+          policyData.InsuredDetails.forEach(element => {
+            let obj = {
+              KidAdultType: element.KidAdultType,
+              Title: element.Title,
+              FullName: element.FullName,
+              RelationshipID: element.RelationShipID,
+              relationship: element.RelationwithApplicant,
+              DateofBirth: element.DateofBirth,
+              PreExistingDisease: element.PreExistingDisease,
+              Height: element.Height,
+              HeightInInches: element.HeightInInches,
+              HeightInFeet: element.HeightInFeet,
+              Weight: element.Weight,
+              Addon1: element.Addon1,
+              Addon2: element.Addon2,
+              Addon3: element.Addon3,
+              Addon4: element.Addon4,
+              Addon5: element.Addon5,
+              Addon6: element.Addon6,
+            }
+            membersAray.push(obj);  
+          });
+          this.insureDetails=membersAray;
+          this.plan = policyData.PlanName;
+          //this.state = policyData.StateID;
+          this.state = 27;
+          this.tenure = policyData.TenureYrs;
+          this.sumInsured = policyData.SumInsured;
+          this.sumInsuredArray = policyData.hospitalSIList;
+          this.fillForm(this.insureDetails);
+          this.fillApplicantForm(this.applicantDetails);
+ 
+          this.tempFormValues = this.getFormValues();
+          this.customerDetails = JSON.parse(localStorage.getItem('insuredDetails'));
+          this.getHighestAge();
+          this.sumInsuredArray = policyData.hospitalSIList;
+          this.policyPremium = policyData.TotalPremium1Year;
+         
+          this.policyDetails.PolicyPremium = policyData.TotalPremium1Year;
+          this.policyDetails.sumInsured = policyData.SumInsured;
+          this.policyDetails.tenure = policyData.TenureYrs;
+          this.policyDetails.adultCount = this.adultCount;
+          this.policyDetails.childCount =this.childCount;
+          this.policyDetails.AgeOfEldest = policyData.AgeOfEldest;
 
+          this.applicantDetails.stateID = policyData.StateID;
+          this.applicantDetails.cityID = policyData.CityID;
+          let nomineeDetaiils ={
+            'NomineeName': policyData.NomineeName,
+            'NomineeTitle' : policyData.NomineeTitle,
+            'NomineeRelationShip':policyData.NomineeRelationShip,
+            'NomineeDOB':policyData.NomineeDOB,
+          }
+          let appointeeDetails ={
+            'AppointeeName':policyData.AppointeeName,
+            'AppointeeDOB':policyData.AppointeeDOB,
+            'AppointeeTitle':policyData.AppointeeTitle,
+            'AppointeeRelationship':policyData.AppointeeRelationship
+          }
+        localStorage.setItem('insuredDetails', JSON.stringify(this.insureDetails));
+        localStorage.setItem('applicantDetails', JSON.stringify(this.applicantDetails));
+        localStorage.setItem("nomineeDetaiils",JSON.stringify(nomineeDetaiils));
+        localStorage.setItem("appointeeDetails",JSON.stringify(appointeeDetails));
+        localStorage.setItem("policyDetails",JSON.stringify(this.policyDetails));
+        
 
+    
 
+        }
+       
+      }
+      else{
+        // Swal.fire('', "Something went wrong !!!", 'error');
+        // return false;
+  
+      }
+    });
 
-    // }
-    // else{
-    //   // Swal.fire('', "Something went wrong !!!", 'error');
-    //   // return false;
-
-    // }
-    // });
 
 
   }
@@ -525,6 +617,11 @@ export class RenewalPolicyComponent implements OnInit {
       this.adultRelationArray = [];
       this.childRelationArray = [];
       this.NomineeRelationship = [];
+      let relation1 ={
+          'RelationshipID': "1020",
+          'RelationshipName': "SELF",
+          'KidAdultType': "Adult"
+      }
 
       res.InsuredRelationship.forEach((relation: any) => {
         if (relation.KidAdultType == 'Adult') {
@@ -535,10 +632,11 @@ export class RenewalPolicyComponent implements OnInit {
 
         }
       });
+      this.adultRelationArray.push(relation1);
       res.NomineeAppointeeRelationship.forEach((rel: any) => {
         this.NomineeRelationship.push(rel);
       });
-
+      
       this.adultRelationArray = _.sortBy(this.adultRelationArray, 'RelationshipName');
       this.NomineeRelationship = _.sortBy(this.NomineeRelationship, 'RelationshipName');
       window.localStorage.nomineeRelationship = JSON.stringify(this.NomineeRelationship);
@@ -593,20 +691,95 @@ export class RenewalPolicyComponent implements OnInit {
     const modalDialog = this.matDialog.open(DiseaseModalComponent, dialogConfig);
     const sub = modalDialog.componentInstance.onAdd.subscribe((data) => {
       // do something
-      console.log(data);  
+      console.log(data);
+      this.pedData.push({ped_index:i, disease_list: data});
+      console.log(this.pedData);
+      let isured_Data = JSON.parse(localStorage.getItem("insuredDetails"));
+      let data1 = this.getFormValues();
+      this.pedData.forEach((element, i) => {
+        // if(this.pedData[i]["ped_index"]==i){
+        isured_Data[element["ped_index"]].pedData = element["disease_list"];
+        console.log(isured_Data);
+        localStorage.setItem("insuredDetails",JSON.stringify(isured_Data));
+        // }
+      });
     });
     modalDialog.afterClosed().subscribe(() => {
       sub.unsubscribe();
     });
   }
+  saveProposal(){
+    this.insureDetails = JSON.parse(localStorage.getItem('insuredDetails'));
+    this.applicantDetails = JSON.parse(localStorage.getItem('applicantDetails'));
+    this.policyDetails = JSON.parse(localStorage.getItem('policyDetails'));
+    this.nomineeDetaiils = JSON.parse(localStorage.getItem('nomineeDetaiils'));
+    this.appointeeDetails = JSON.parse(localStorage.getItem("appointeeDetails"));
 
+
+    let ProppsalRequest={
+      "IsCustomerPID": "true",
+      "UserType": "Agent",
+      "ipaddress": "ISECURITY-GCHI",
+      "IPGPayment": "true",
+      "PolicyNo": this.policyDetails.PolicyNumber,
+      "VoluntaryDeductible": "0",
+      "AgeOfEldest": this.policyDetails.AgeOfEldest,
+      "NoOfAdults": this.policyDetails.adultCount,
+      "NoOfKids": this.policyDetails.childCount,
+      "NomineeDOB": this.nomineeDetaiils.NomineeDOB,
+      "NomineeName": this.nomineeDetaiils.NomineeName,
+      "NomineeRelationShip": this.nomineeDetaiils.NomineeRelationShip,
+      "NomineeRelationShipID": "",
+      "NomineeTitle": this.nomineeDetaiils.NomineeTitle,
+      "IS_IBANK_RELATIONSHIP": "NO",
+      "APS_ID": "",
+      "CUSTOMER_REF_NO": "",
+      "SubLimitApplicable": "NO SUBLIMIT",
+      "SumInsured": this.policyDetails.sumInsured,
+      "Tenure": this.policyDetails.tenure,
+      "PaymentMode": "RAZORPAY",
+      "CardType": "",
+      "ModeID": "0",
+      "CardHolderName": "",
+      "CardNumber": "",
+      "CVVNumber": "",
+      "CardExpiryMonth": "",
+      "CardExpiryYear": "",
+      "PANNumber": this.applicantDetails.applicantPan,
+      "AadhaarNumber": this.applicantDetails.applicantAadhar,
+      "AppointeeLastName": this.appointeeDetails.AppointeeName,
+      "AppointeeTitleID": this.appointeeDetails.AppointeeTitle,
+      "AppointeeRelationShipID": "",
+      "AppointeeRelationShipName": this.appointeeDetails.AppointeeRelationship,
+      "AppointeeDOB": this.appointeeDetails.AppointeeDOB,
+      "AddressLine1": this.applicantDetails.applicantAddress1,
+      "AddressLine2": this.applicantDetails.applicantAddress2,
+      "Landmark": "",
+      "CityID": this.applicantDetails.cityID,
+      "StateID": this.applicantDetails.stateID,
+      "PincodeID": this.applicantDetails.applicantPinCode,
+      "EmailID": this.applicantDetails.emailid,
+      "MobileNo": this.applicantDetails.mobileNumber,
+      "AreaVillageID": "0",
+      "isInsuredChange": "false",
+      "isRenewalEdited": "true",
+      "Members": this.insureDetails,
+      "GSTApplicable": "false",
+      "UINApplicable": "false",
+      "isGHD": "Yes"
+      }
+      console.log(ProppsalRequest);
+      
+  }
   onSubmit() {
-    console.log("submit");
+    
+    
 
     this.submitted = true;
     if (this.applicantForm.valid) {
-      alert('Form Submitted succesfully!!!\n Check the values in browser console.');
+      this.saveProposal();
       console.table(this.applicantForm.value);
+      return;
       this.router.navigateByUrl('/payment');
 
     }
