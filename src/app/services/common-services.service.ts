@@ -45,7 +45,7 @@ export class CommonServicesService {
   }
   postAPICallWithAuthToken(endPoint, request): Observable<any> {
     this.jsonhttpOptions = this.checkHttpStatus(localStorage.getItem("basicAuth"));
-    return this.http.post(this.baseURL + endPoint,request ,this.jsonhttpOptions).pipe(timeout(240000));
+    return this.http.post(this.baseURL + endPoint,request ,this.jsonhttpOptions);
   }
  
 

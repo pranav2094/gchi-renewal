@@ -16,9 +16,9 @@ export class PaymentComponent implements OnInit {
   insuranceAmountDetails: any;
   paymentMode: any;
   SavedPolicyResponse: any;
-  memberDetails: any;
+  policyDetails: any;
   paymentID: string | number;
-  customerDetails: any;
+  applicantDetails: any;
   baseURL: any; options: any;
   insuredAmount: any;
   spinnerTxt:any;
@@ -31,17 +31,17 @@ export class PaymentComponent implements OnInit {
 
   ngOnInit() {
 
-    // this.insuranceAmountDetails = JSON.parse(localStorage.getItem('insuranceAmountDetails'));
-    // this.memberDetails = JSON.parse(localStorage.getItem("memberDetails"));
-    // this.SavedPolicyResponse = JSON.parse(localStorage.getItem('savedPolicyResponse'));
-    // this.customerDetails = JSON.parse(localStorage.getItem('customerDetails'));
-    // this.insuredAmount = parseFloat(this.insuranceAmountDetails.totalPremium).toFixed(2);
+   
+    this.policyDetails = JSON.parse(localStorage.getItem("policyDetails"));
+    this.SavedPolicyResponse = JSON.parse(localStorage.getItem('proposalResponse'));
+    this.applicantDetails = JSON.parse(localStorage.getItem('applicantDetails'));
     this.baseURL = environment.baseURL;
     console.log(this.baseURL);
     
     this.ReceiveMessage = this.ReceiveMessage.bind(this);
     if (!window['postMessage']) {
-      Swal.fire('Oops...', 'Something went wrong!', 'error')
+      Swal.fire('', 'Something went wrong!', 'error');
+      return;
     } else {
       if (window.addEventListener) {
         window.addEventListener("message", this.ReceiveMessage, false);
@@ -65,9 +65,7 @@ export class PaymentComponent implements OnInit {
       let payBody = {
         "TransType": "POLICY_PAYMENT",
         "GatewayReturnURL": "",
-        //"PolicyIDs": this.SavedPolicyResponse.PolicyId,
-        //"PolicyIDs": "30382456",
-        "PolicyIDs": "15150435",
+        "PolicyIDs": this.SavedPolicyResponse.PolicyId,
         "PayerType": "Customer",
         "ModeID": 0,
         "UserRole": "AGENT",
@@ -115,12 +113,10 @@ export class PaymentComponent implements OnInit {
           }
         },
         "prefill": {
-          //email: this.custEmail,
-          //contact: this.customerDetails.MobileNumber,
-          //name: this.custName,
-          email: "pranavpujare@gmail.com",
-          contact: "9821804575",
-          name: "Pranav",
+ 
+          email: this.applicantDetails.emailid,
+          contact: this.applicantDetails.mobileNumber,
+          name: this.applicantDetails.applicantName,
           method: type
         },
         "theme": {
@@ -145,6 +141,12 @@ export class PaymentComponent implements OnInit {
           let childWindow = window.open('#/razor-pay-fallback', 'Childwindow', 'status=0,toolbar=0,menubar=0,resizable=0,scrollbars=1,top=' + top + ' ,left=' + left + ',height=' + height + ',width=' + width + '');
           window['child'] = childWindow;
           window['router'] = router;
+          if (!childWindow || childWindow.closed || typeof childWindow.closed == 'undefined') {
+            window.open('#/razor-pay-fallback', "_self");
+            window.postMessage({ 'razorPayDetails': params, 'url': self.baseURL + '/PaymentGateway/RazorPayPaymentProcess' }, 'http://localhost:4200/#/payment');
+            //window.postMessage({ 'razorPayDetails': params, 'url': self.baseURL + '/PaymentGateway/RazorPayPaymentProcess' }, self.baseURL + '#/payment');
+            return;
+          }
 
           console.log("Child Window 1 ", childWindow);
           self.childPageDetails = childWindow;
@@ -160,22 +162,6 @@ export class PaymentComponent implements OnInit {
               //childWindow.postMessage({ 'razorPayDetails': params, 'url': self.baseURL + '/PaymentGateway/RazorPayPaymentProcess' }, self.baseURL + '#/payment');
             }
           }
-
-          // var form = document.createElement("form");
-          // form.setAttribute("method", "post");
-          // form.setAttribute("action", config.baseURL + '/PaymentGateway/RazorPayPaymentProcess');
-          // for (var key in params) {
-          //   if (params.hasOwnProperty(key)) {
-          //     var hiddenField = document.createElement("input");
-          //     hiddenField.setAttribute("type", "hidden");
-          //     hiddenField.setAttribute("name", key);
-          //     hiddenField.setAttribute("value", params[key]);
-          //     form.appendChild(hiddenField);
-          //   }
-          // }
-          // document.body.appendChild(form);
-          // console.log("Form", form);
-          // form.submit();
         }
       };
       console.log("razorPayOptions = ", this.options);

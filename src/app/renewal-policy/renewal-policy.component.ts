@@ -65,6 +65,10 @@ export class RenewalPolicyComponent implements OnInit {
   nomineeDetaiils:any;
   appointeeDetails:any;
   pedData = [];
+  isInsuredChange:boolean=false;
+  isRenewalEdited:boolean=false;
+  proposalResponse:any;
+
   constructor(public matDialog: MatDialog, private router: Router, public cm: CommonMethodsService, public cs: CommonServicesService, private fb: FormBuilder) {
     this.policyDetails = JSON.parse(localStorage.getItem('policyDetails'));
 
@@ -739,19 +743,44 @@ export class RenewalPolicyComponent implements OnInit {
     });
   }
   saveProposal(){
+    
     this.insureDetails = JSON.parse(localStorage.getItem('insuredDetails'));
     this.applicantDetails = JSON.parse(localStorage.getItem('applicantDetails'));
     this.policyDetails = JSON.parse(localStorage.getItem('policyDetails'));
     this.nomineeDetaiils = JSON.parse(localStorage.getItem('nomineeDetaiils'));
     this.appointeeDetails = JSON.parse(localStorage.getItem("appointeeDetails"));
-
-
+    let membersAray=[];
+    if(this.policyDetails.sumInsured != this.sumInsured )
+    {
+      this.isRenewalEdited=true;
+    }
+       
+    this.insureDetails.forEach(function (element) {
+      let obj = {
+        MemberType: element.membertype,
+        TitleID: element.Title,
+        Name: element.FullName,
+        RelationshipID: element.RelationshipID,
+        RelationshipName: element.relationship,
+        DOB: element.DateofBirth,
+        Height: element.Height,
+        Weight: element.Weight,
+        isExisting: "true",
+        OtherDisease: element.PreExistingDisease,
+        Ailments: ""
+      }
+      membersAray.push(obj);
+    });
+    console.log(this.modify);
+    
+    console.log(membersAray);
     let ProppsalRequest={
       "IsCustomerPID": "true",
       "UserType": "Agent",
       "ipaddress": "ISECURITY-GCHI",
       "IPGPayment": "true",
-      "PolicyNo": this.policyDetails.PolicyNumber,
+      // "PolicyNo": this.policyDetails.PolicyNumber,
+       "PolicyNo": '4015i/OBOP/51969580/00/000',
       "VoluntaryDeductible": "0",
       "AgeOfEldest": this.policyDetails.AgeOfEldest,
       "NoOfAdults": this.policyDetails.adultCount,
@@ -791,28 +820,46 @@ export class RenewalPolicyComponent implements OnInit {
       "EmailID": this.applicantDetails.emailid,
       "MobileNo": this.applicantDetails.mobileNumber,
       "AreaVillageID": "0",
-      "isInsuredChange": "false",
-      "isRenewalEdited": "true",
+      "isInsuredChange": this.modify,
+      "isRenewalEdited": this.isRenewalEdited,
       "Members": this.insureDetails,
       "GSTApplicable": "false",
       "UINApplicable": "false",
       "isGHD": "Yes"
       }
       console.log(ProppsalRequest);
-      
+      this.spinnerTxt = "Please wait... We are saving proposal details."
+      this.cm.showSpinner(true,this.spinnerTxt);
+     
+      this.cs.postAPICallWithAuthToken('api/Renewal/SaveProposalRNGCHI', ProppsalRequest).subscribe((res) => {
+      this.cm.showSpinner(false);
+      console.log(res);
+      if(res.StatusCode ==1)
+      {
+          this.proposalResponse = res.FinalPolicy;
+          localStorage.setItem("proposalResponse",JSON.stringify(this.proposalResponse));
+          this.router.navigateByUrl('/payment');
+          
+      }else
+      {
+        Swal.fire("",res.StatusMessage,"error");
+        return;
+      }
+  
+      });
+
+ 
+
   }
   onSubmit() {
-    
-    
-
-    this.submitted = true;
-    if (this.applicantForm.valid) {
-      this.saveProposal();
-      console.table(this.applicantForm.value);
-      return;
-      this.router.navigateByUrl('/payment');
-
-    }
+  
+  this.submitted = true;
+  if (!this.applicantForm.valid) {
+    return;
+  }
+  else{
+    this.saveProposal();
+  }
   }
 
 }
