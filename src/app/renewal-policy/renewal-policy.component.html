@@ -70,7 +70,7 @@
                     <table class="radio1">
                       <tr>
                         <td>
-                          <input type="radio" id="modifyDet" value="modify" (change)=renewalType($event) name="sltAnyone" />
+                          <input type="radio" id="modifyDet" value="modify" [attr.disabled]="isPlansFetch? null : ''"  (change)=renewalType($event) name="sltAnyone" />
                           <label for="modifyDet">Modified Details</label>
                         </td>
                       </tr>
@@ -152,7 +152,12 @@
                 *ngIf="Members.controls[i].get('insureddob').errors?.required && isValidFormSubmitted != null && !isValidFormSubmitted"
                 class="error">
                 Please Enter Date of Birth
-              </label>
+                </label>
+                <label
+                *ngIf="Members.controls[i].get('insureddob').hasError('matDatepickerMin') || Members.controls[i].get('insureddob').hasError('matDatepickerMax') "
+                class="error">
+                Please Enter valid Date of Birth
+                </label>
               </div>
               <div class="col-lg-2 col-md-4 col-sm-5 col-7 form-group">
                 <label>PED</label>
@@ -218,8 +223,8 @@
               <div class="col-lg-2 col-md-6 col-sm-6 form-group">
                 <label>Sum Insured</label>
                 <select class="form-control custom-select" formControlName="sumInsured" (change)="changeSI(sumInsured)" [attr.disabled]="modify? null : ''"  [(ngModel)]="sumInsured"  >
-                  <option *ngFor="let si of sumInsuredArray" value="{{si.SIValue}}" >
-                    {{si.SIValue}}
+                  <option *ngFor="let si of sumInsuredArray" value="{{si}}" >
+                    {{si}}
                   </option>
                 </select>
               </div>

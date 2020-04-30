@@ -12,6 +12,7 @@ export class RazorPayConfirmationComponent implements OnInit {
   razorPayData: any;
   paymentConfRes: any;
   commonPaymentRes: any;
+  isPendingStatus:boolean=false;
   constructor(public cs: CommonServicesService, public cm:CommonMethodsService) { }
 
   ngOnInit() {
@@ -27,6 +28,11 @@ export class RazorPayConfirmationComponent implements OnInit {
         console.log(res);
         this.commonPaymentRes = res;
         this.paymentConfRes = res.ConfirmPolicy[0];
+
+        let statusStr = (this.paymentConfRes.PolicyStatus).toLowerCase();
+        this.isPendingStatus = statusStr.includes('pending');
+
+
         if (res.Message) {
           msg = res.Message;
           //this.presentAlert(msg);

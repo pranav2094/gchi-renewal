@@ -17,9 +17,6 @@ export class SwapComponent implements OnInit {
   ngOnInit(): void {
     localStorage.clear();
     let policyno = this.activeRoute.snapshot.queryParams.policyno;
-  
-    console.log(policyno);
-    console.log("decoded", decodeURIComponent(policyno));
     this.validatePolicy(decodeURIComponent(policyno));
    
   }

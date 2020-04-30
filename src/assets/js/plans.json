@@ -1,0 +1,118 @@
+{
+    "SubProductCode": "7189",
+    "SubProductName": "GCHI_OBOP_10to25_Lacs_SI",
+    "PlansDetails": [
+        {
+            "PlanName": "GCHI_OBOP_10to25_1A_1C_1YR",
+            "PlanCode": "63459",
+            "MinAge": "0.25",
+            "MaxAge": "125.0",
+            "NoOfAdults": 1,
+            "NoOfKids": 1,
+            "subProductVisibility": true,
+            "planVisibility": true,
+            "SumInsured": [
+                1000000,
+                2500000,
+                2000000,
+                1500000
+            ],
+            "Tenure": 1,
+            "PlanEndDate": "12-Mar-2050"
+        },
+        {
+            "PlanName": "GCHI_OBOP_10to25_1A_2C_1YR",
+            "PlanCode": "63460",
+            "MinAge": "0.25",
+            "MaxAge": "125.0",
+            "NoOfAdults": 1,
+            "NoOfKids": 2,
+            "subProductVisibility": true,
+            "planVisibility": true,
+            "SumInsured": [
+                1000000,
+                2500000,
+                2000000,
+                1500000
+            ],
+            "Tenure": 1,
+            "PlanEndDate": "12-Mar-2050"
+        },
+        {
+            "PlanName": "GCHI_OBOP_10to25_2A_2C_1YR",
+            "PlanCode": "63458",
+            "MinAge": "0.25",
+            "MaxAge": "125.0",
+            "NoOfAdults": 2,
+            "NoOfKids": 2,
+            "subProductVisibility": true,
+            "planVisibility": true,
+            "SumInsured": [
+                1000000,
+                2500000,
+                2000000,
+                1500000
+            ],
+            "Tenure": 1,
+            "PlanEndDate": "12-Mar-2050"
+        },
+        {
+            "PlanName": "GCHI_OBOP_10to25_2A_1C_1YR",
+            "PlanCode": "63457",
+            "MinAge": "0.25",
+            "MaxAge": "125.0",
+            "NoOfAdults": 2,
+            "NoOfKids": 1,
+            "subProductVisibility": true,
+            "planVisibility": true,
+            "SumInsured": [
+                1000000,
+                2500000,
+                2000000,
+                1500000
+            ],
+            "Tenure": 1,
+            "PlanEndDate": "12-Mar-2050"
+        },
+        {
+            "PlanName": "GCHI_OBOP_10to25_1A_1YR",
+            "PlanCode": "63455",
+            "MinAge": "21.0",
+            "MaxAge": "125.0",
+            "NoOfAdults": 1,
+            "NoOfKids": 0,
+            "subProductVisibility": true,
+            "planVisibility": true,
+            "SumInsured": [
+                1000000,
+                2500000,
+                2000000,
+                1500000
+            ],
+            "Tenure": 1,
+            "PlanEndDate": "12-Mar-2050"
+        },
+        {
+            "PlanName": "GCHI_OBOP_10to25_2A_1YR",
+            "PlanCode": "63456",
+            "MinAge": "21.0",
+            "MaxAge": "125.0",
+            "NoOfAdults": 2,
+            "NoOfKids": 0,
+            "subProductVisibility": true,
+            "planVisibility": true,
+            "SumInsured": [
+                1000000,
+                2500000,
+                2000000,
+                1500000
+            ],
+            "Tenure": 1,
+            "PlanEndDate": "12-Mar-2050"
+        }
+    ],
+    "StatusCode": 1,
+    "StatusType": "Success",
+    "StatusMessage": "Plan retrieved successfully",
+    "ErrorText": null
+}

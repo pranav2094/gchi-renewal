@@ -20,12 +20,11 @@ export class PaymentComponent implements OnInit {
   paymentID: string | number;
   applicantDetails: any;
   baseURL: any; options: any;
-  insuredAmount: any;
+  PolicyPremium: any;
+  tenure:any;
   spinnerTxt:any;
   commonDataRes: any; childPageDetails: any;
   constructor(public cs: CommonServicesService, public ngZone: NgZone, public router: Router, public cm:CommonMethodsService) {
-    this.baseURL = environment.baseURL;
-    console.log(this.baseURL);
 
   }
 
@@ -36,6 +35,8 @@ export class PaymentComponent implements OnInit {
     this.SavedPolicyResponse = JSON.parse(localStorage.getItem('proposalResponse'));
     this.applicantDetails = JSON.parse(localStorage.getItem('applicantDetails'));
     this.baseURL = environment.baseURL;
+    this.PolicyPremium=this.policyDetails.PolicyPremium;
+    this.tenure =this.policyDetails.tenure;
     console.log(this.baseURL);
     
     this.ReceiveMessage = this.ReceiveMessage.bind(this);
@@ -65,7 +66,8 @@ export class PaymentComponent implements OnInit {
       let payBody = {
         "TransType": "POLICY_PAYMENT",
         "GatewayReturnURL": "",
-        "PolicyIDs": this.SavedPolicyResponse.PolicyId,
+        "PolicyIDs":"10162547",
+       // "PolicyIDs": this.SavedPolicyResponse[0].PolicyID,
         "PayerType": "Customer",
         "ModeID": 0,
         "UserRole": "AGENT",
@@ -137,7 +139,8 @@ export class PaymentComponent implements OnInit {
           let height = screen.height / 2;
           let left = (screen.width - width) / 2;
           let top = (screen.height - height) / 4;
-
+          console.log("PARAMS--------",params);
+          
           let childWindow = window.open('#/razor-pay-fallback', 'Childwindow', 'status=0,toolbar=0,menubar=0,resizable=0,scrollbars=1,top=' + top + ' ,left=' + left + ',height=' + height + ',width=' + width + '');
           window['child'] = childWindow;
           window['router'] = router;
@@ -175,6 +178,7 @@ export class PaymentComponent implements OnInit {
   ReceiveMessage(evt: any) {
     console.log("Receive Message", evt, this.baseURL);
     if (evt.origin != this.baseURL.substring(0, this.baseURL.lastIndexOf("/"))) {
+      console.log(evt.origin);
       return;
     } else {
       var data = evt.data;
