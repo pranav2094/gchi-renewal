@@ -15,6 +15,8 @@ export class DiseaseModalComponent implements OnInit {
   diseaseForm: FormGroup;
   modify:boolean=false;
   diseasesList;
+  pedData;
+
   constructor(public dialogRef: MatDialogRef<DiseaseModalComponent>, public cm:CommonMethodsService,public fb: FormBuilder) { 
     
     this.diseaseForm = this.fb.group({
@@ -44,10 +46,16 @@ export class DiseaseModalComponent implements OnInit {
         alert("Please select Pre Existing Disease from list");     
       }
       else{
-        this.onAdd.emit(JSON.stringify(this.cm.selctedDiseaseList.checkArray));
+        this.onAdd.emit(JSON.stringify(this.pedData));
         this.dialogRef.close();
       }
     }
+  }
+
+  getPEDData(ped){
+    return this.diseasesList.filter(d =>{
+      return d.Value == ped;
+    });
   }
 
   cancelPED()
@@ -61,6 +69,8 @@ export class DiseaseModalComponent implements OnInit {
 
     if (e.target.checked) {
       checkArray.push(new FormControl(e.target.value));
+      this.pedData = this.getPEDData(e.target.value);
+
     } else {
       let i: number = 0;
       checkArray.controls.forEach((item: FormControl) => {

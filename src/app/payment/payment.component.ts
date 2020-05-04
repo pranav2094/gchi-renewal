@@ -66,8 +66,8 @@ export class PaymentComponent implements OnInit {
       let payBody = {
         "TransType": "POLICY_PAYMENT",
         "GatewayReturnURL": "",
-        "PolicyIDs":"10162547",
-       // "PolicyIDs": this.SavedPolicyResponse[0].PolicyID,
+        "PolicyIDs":"10162548",
+        //"PolicyIDs": this.SavedPolicyResponse[0].PolicyID,
         "PayerType": "Customer",
         "ModeID": 0,
         "UserRole": "AGENT",

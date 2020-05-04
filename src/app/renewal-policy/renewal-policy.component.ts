@@ -72,6 +72,8 @@ export class RenewalPolicyComponent implements OnInit {
   planDetails=[];
   isPlansFetch: boolean = false;
   planCode:any;
+  isNew= false;
+
 
   constructor(public matDialog: MatDialog, private router: Router, public cm: CommonMethodsService, public cs: CommonServicesService, private fb: FormBuilder) {
     this.policyDetails = JSON.parse(localStorage.getItem('policyDetails'));
@@ -151,7 +153,6 @@ export class RenewalPolicyComponent implements OnInit {
       this.customerList.push(this.createMembers(this.defaultData));
     }
     this.adultChildCount();
-
   }
   fillApplicantForm(applicantDetails) {
     const applicantName = applicantDetails.applicantName || '';
@@ -226,7 +227,7 @@ export class RenewalPolicyComponent implements OnInit {
       relationship: [relationship, Validators.required],
       insureddob: [new Date(insureddob), Validators.required],
       membertype: [membertype],
-      ped: [ped]
+      ped: [ped]    
     });
     return form;
   }
@@ -271,7 +272,6 @@ export class RenewalPolicyComponent implements OnInit {
   renewalType(val: any) {
     this.modify = val.target.value == "modify" ? true : false;
     localStorage.modify = this.modify;
-    this.checkForm();
     if (!this.modify) {
       this.fillForm(this.customerDetails);
     }
@@ -290,7 +290,6 @@ export class RenewalPolicyComponent implements OnInit {
       if (same) {
 
         this.RNFetch(this.policyDetails.PolicyNumber, target);
-
 
       } else {
         this.showRenewal = false;
@@ -329,17 +328,19 @@ export class RenewalPolicyComponent implements OnInit {
     this.checkForm();
   }
   addInsured() {
+    this.isNew = true;
     let adultChildCount = this.adultChildCount();
     // let defaultData = adultChildCount['adultCount'] >= 2 ? 'Kid' : adultChildCount['childCount'] >= 3 ? 'Adult' : 'Kid' ;
     let defaultData = adultChildCount['childCount'] >= 3 ? 'Adult' : adultChildCount['adultCount'] >= 2 ? 'Kid' : 'Adult';
     //  adultChildCount['childCount'] > 3 ? 'Adult': 'Kid';
     this.defaultData = { membertype: defaultData };
     console.log(this.defaultData);
-
+    
     (this.angForm.controls['Members'] as FormArray).push(this.createMembers(this.defaultData));
     this.checkForm();
     let data = JSON.parse(localStorage.getItem('insuredDetails'));
     let le = localStorage.getItem('insuredDetails').length;
+    
     data.push({});
     localStorage.setItem("insuredDetails", JSON.stringify(data));
     console.log("Higest age is", this.highestAge);
@@ -368,7 +369,7 @@ export class RenewalPolicyComponent implements OnInit {
     this.insureDetails = JSON.parse(localStorage.getItem('insuredDetails'));
     this.nomineeDetaiils = JSON.parse(localStorage.getItem('nomineeDetaiils'));
     this.appointeeDetails = JSON.parse(localStorage.getItem("appointeeDetails"));  
-
+    
     this.Members.value.forEach((element, i) => {
       this.insureDetails[i].PreExistingDisease = element.ped;
       this.insureDetails[i].FullName = element.insuredname;
@@ -376,6 +377,7 @@ export class RenewalPolicyComponent implements OnInit {
       this.insureDetails[i].membertype = element.membertype;
       this.insureDetails[i].Title = element.title;
       this.insureDetails[i].relationship = element.relationship;
+      this.insureDetails[i].isExisting = element.isExisting || 'false';
     });
     console.log("MOdified", this.insureDetails);
     localStorage.setItem('insuredDetails', JSON.stringify(this.insureDetails));
@@ -389,33 +391,12 @@ export class RenewalPolicyComponent implements OnInit {
         DOB: moment(element.insureddob).format('DD-MM-YYYY'),
         Height: "0.0",
         Weight: "0",
-        isExisting: {
-          IsExisting:'',
-          Member: null,
-          TypeOfPolicy: null,
-          PolicyDuration: 0,
-          InsuranceCompany: null,
-          SumInsured: 0
-        },
+        isExisting: element.isExisting,
         OtherDisease: "",
         Ailments: {
-          RadioButtonChecked: null,
-          CheckButtonChecked: false,
-          MemberAilmentID: 0,
-          HealthMemberID: 0,
-          AilmentStartDate: "0001-01-01T00:00:00",
           AilmentID: 0,
-          OtherAilment: null,
-          MappedAilmentId: null,
-          AgeOfInsured: 0,
-          PEDCode: null,
           AilmentName: null,
-          Month: null,
-          Year: null
-        },
-        PortabilityWaiver: null,
-        PortabilityDOJ: null,
-        PortabilitySI: null
+        }
       }
       membersArray.push(obj);
     }.bind(this));
@@ -429,9 +410,9 @@ export class RenewalPolicyComponent implements OnInit {
       "PolicyNo": this.policyDetails.PolicyNumber,
       "ipaddress": 'ISECURITY-GCHI',
       "VoluntaryDeductible": null,
-      "AgeOfEldest": this.policyDetails.AgeOfEldest,
-      "NoOfAdults": this.policyDetails.adultCount,
-      "NoOfKids": this.policyDetails.childCount,
+      "AgeOfEldest": this.highestAge,
+      "NoOfAdults": this.adultCount,
+      "NoOfKids": this.childCount,
       "NomineeDOB": this.nomineeDetaiils.NomineeDOB,
       "NomineeName": this.nomineeDetaiils.NomineeName,
       "NomineeRelationShip": this.nomineeDetaiils.NomineeRelationShip,
@@ -445,7 +426,7 @@ export class RenewalPolicyComponent implements OnInit {
           "Member": membersArray
       },
       "isGSTRegistered": false,
-      "IsRenewalEdit": false
+      "IsRenewalEdit": true
   }
   console.log(requestBody);
   
@@ -549,11 +530,14 @@ export class RenewalPolicyComponent implements OnInit {
     };
     let payLoadStr = JSON.stringify(payload);
 
-    this.spinnerTxt = "Please wait... We are fetching policy details."
-    this.cm.showSpinner(true, this.spinnerTxt);
+    // this.spinnerTxt = "Please wait... We are fetching policy details."
+    // this.cm.showSpinner(true, this.spinnerTxt);
 
-    this.cs.postAPICallWithAuthToken('api/renewal/HealthPolicyRenewalRNGCHI', payLoadStr).subscribe((res) => {
-      this.cm.showSpinner(false);
+    // this.cs.postAPICallWithAuthToken('api/renewal/HealthPolicyRenewalRNGCHI', payLoadStr).subscribe((res) => {
+    //   this.cm.showSpinner(false);
+    fetch("assets/js/response.json", { method: "GET" })
+    .then(data => data.json())
+    .then(res => {    
       this.showRenewal = true;
       this.scroll(target);
       console.log(res);
@@ -578,12 +562,7 @@ export class RenewalPolicyComponent implements OnInit {
               HeightInInches: element.HeightInInches,
               HeightInFeet: element.HeightInFeet,
               Weight: element.Weight,
-              Addon1: element.Addon1,
-              Addon2: element.Addon2,
-              Addon3: element.Addon3,
-              Addon4: element.Addon4,
-              Addon5: element.Addon5,
-              Addon6: element.Addon6,
+              isExisting :'true'
             }
             membersAray.push(obj);
           });
@@ -591,12 +570,13 @@ export class RenewalPolicyComponent implements OnInit {
           this.plan = policyData.PlanName;
           //this.state = policyData.StateID;
           this.state = 27;
-         
           this.fillForm(this.insureDetails);
           this.fillApplicantForm(this.applicantDetails);
           this.customerDetails = this.insureDetails;
           this.tenure = policyData.TenureYrs;
           this.sumInsured = policyData.SumInsured;
+
+    
           this.getHighestAge();
           this.policyPremium = policyData.TotalPremium1Year;
 
@@ -621,6 +601,7 @@ export class RenewalPolicyComponent implements OnInit {
             'AppointeeTitle': policyData.AppointeeTitle,
             'AppointeeRelationship': policyData.AppointeeRelationship
           }
+          this.getPlanDetailsOnChange();
           localStorage.setItem('insuredDetails', JSON.stringify(this.insureDetails));
           localStorage.setItem('applicantDetails', JSON.stringify(this.applicantDetails));
           localStorage.setItem("nomineeDetaiils", JSON.stringify(nomineeDetaiils));
@@ -644,12 +625,12 @@ export class RenewalPolicyComponent implements OnInit {
     console.log("Adult Kid count is", this.adultChildCount());
     let modified_plan_details={};
     let adultChildCount = this.adultChildCount();
-    let adultCount = adultChildCount['adultCount'];
-    let childCount = adultChildCount['childCount'];
+    this.adultCount = adultChildCount['adultCount'];
+    this.childCount = adultChildCount['childCount'];
     this.planDetails = JSON.parse(localStorage.getItem('planDetails'));
     this.planDetails.forEach(element => {
    
-      if(element.NoOfAdults == adultCount && element.NoOfKids == childCount)
+      if(element.NoOfAdults == this.adultCount && element.NoOfKids == this.childCount)
       {
         this.sumInsuredArray = element.SumInsured.sort(function(a, b){return a-b});
         this.tenure=element.Tenure;
@@ -787,8 +768,12 @@ export class RenewalPolicyComponent implements OnInit {
   }
   checkAutoRenewal() {
     console.log("click");
-
-
+  }
+  noPED(i: any){
+    let isured_Data = JSON.parse(localStorage.getItem("insuredDetails"));
+    isured_Data[i].pedData = '';
+    console.log(isured_Data);
+    localStorage.setItem("insuredDetails",JSON.stringify(isured_Data));
   }
   showPED(ev: any, i) {
     const dialogConfig = new MatDialogConfig();
@@ -849,7 +834,7 @@ export class RenewalPolicyComponent implements OnInit {
         DOB: element.DateofBirth,
         Height: element.Height,
         Weight: element.Weight,
-        isExisting: "true",
+        isExisting: element.isExisting,
         OtherDisease: element.PreExistingDisease,
         Ailments: ""
       }
@@ -918,6 +903,8 @@ export class RenewalPolicyComponent implements OnInit {
       "AccIfscCode": this.applicantForm.value.applicantIFSCCode
     }
     console.log(ProppsalRequest);
+    this.router.navigateByUrl('/payment');
+    return;
  
 
     this.spinnerTxt = "Please wait... We are saving proposal details."
